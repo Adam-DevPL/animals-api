@@ -1,0 +1,180 @@
+{
+  "taskDefinitionArn": "arn:aws:ecs:eu-west-1:741395632136:task-definition/animals-api:5",
+  "containerDefinitions": [
+      {
+          "name": "mongodb",
+          "image": "741395632136.dkr.ecr.eu-west-1.amazonaws.com/animals-mongo-db",
+          "cpu": 0,
+          "portMappings": [
+              {
+                  "name": "mongodb-27017-tcp",
+                  "containerPort": 27017,
+                  "hostPort": 27017,
+                  "protocol": "tcp",
+                  "appProtocol": "http"
+              }
+          ],
+          "essential": true,
+          "environment": [
+              {
+                  "name": "MONGO_INITDB_ROOT_USERNAME",
+                  "value": "mongouser"
+              },
+              {
+                  "name": "MONGO_INITDB_ROOT_PASSWORD",
+                  "value": "password1234"
+              }
+          ],
+          "environmentFiles": [],
+          "mountPoints": [],
+          "volumesFrom": [],
+          "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                  "awslogs-create-group": "true",
+                  "awslogs-group": "/ecs/animals-api",
+                  "awslogs-region": "eu-west-1",
+                  "awslogs-stream-prefix": "ecs"
+              }
+          }
+      },
+      {
+          "name": "redis",
+          "image": "741395632136.dkr.ecr.eu-west-1.amazonaws.com/redis-cache",
+          "cpu": 0,
+          "portMappings": [
+              {
+                  "name": "redis-6379-tcp",
+                  "containerPort": 6379,
+                  "hostPort": 6379,
+                  "protocol": "tcp",
+                  "appProtocol": "http"
+              }
+          ],
+          "essential": false,
+          "environment": [],
+          "environmentFiles": [],
+          "mountPoints": [],
+          "volumesFrom": [],
+          "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                  "awslogs-create-group": "true",
+                  "awslogs-group": "/ecs/animals-api",
+                  "awslogs-region": "eu-west-1",
+                  "awslogs-stream-prefix": "ecs"
+              }
+          }
+      },
+      {
+          "name": "animals-api",
+          "image": "741395632136.dkr.ecr.eu-west-1.amazonaws.com/animals-api",
+          "cpu": 0,
+          "portMappings": [
+              {
+                  "name": "animals-api-3000-tcp",
+                  "containerPort": 3000,
+                  "hostPort": 3000,
+                  "protocol": "tcp",
+                  "appProtocol": "http"
+              }
+          ],
+          "essential": false,
+          "environment": [
+              {
+                  "name": "MONGO_USERNAME",
+                  "value": "mongouser"
+              },
+              {
+                  "name": "REDIS_HOST",
+                  "value": "127.0.0.1"
+              },
+              {
+                  "name": "REDIS_PORT",
+                  "value": "6379"
+              },
+              {
+                  "name": "MONGO_HOST",
+                  "value": "127.0.0.1"
+              },
+              {
+                  "name": "MONGO_PORT",
+                  "value": "27017"
+              },
+              {
+                  "name": "MONGO_PASSWORD",
+                  "value": "password1234"
+              }
+          ],
+          "environmentFiles": [],
+          "mountPoints": [],
+          "volumesFrom": [],
+          "workingDirectory": "/usr/src/app",
+          "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                  "awslogs-create-group": "true",
+                  "awslogs-group": "/ecs/animals-api",
+                  "awslogs-region": "eu-west-1",
+                  "awslogs-stream-prefix": "ecs"
+              }
+          }
+      }
+  ],
+  "family": "animals-api",
+  "taskRoleArn": "arn:aws:iam::741395632136:role/ecsTaskExecutionRole",
+  "executionRoleArn": "arn:aws:iam::741395632136:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "revision": 5,
+  "volumes": [],
+  "status": "ACTIVE",
+  "requiresAttributes": [
+      {
+          "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+      },
+      {
+          "name": "ecs.capability.execution-role-awslogs"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.ecr-auth"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.17"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.task-iam-role"
+      },
+      {
+          "name": "ecs.capability.execution-role-ecr-pull"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+      },
+      {
+          "name": "ecs.capability.task-eni"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+      }
+  ],
+  "placementConstraints": [],
+  "compatibilities": [
+      "EC2",
+      "FARGATE"
+  ],
+  "requiresCompatibilities": [
+      "FARGATE"
+  ],
+  "cpu": "512",
+  "memory": "1024",
+  "runtimePlatform": {
+      "cpuArchitecture": "X86_64",
+      "operatingSystemFamily": "LINUX"
+  },
+  "registeredAt": "2023-03-11T13:55:39.802Z",
+  "registeredBy": "arn:aws:iam::741395632136:root",
+  "tags": []
+}
