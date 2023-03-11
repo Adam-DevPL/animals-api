@@ -12,7 +12,7 @@ export class AppService {
     @InjectModel(Todo.name) private readonly model: Model<TodoDocument>,
   ) {}
   async getHello(): Promise<string> {
-    await this.cacheManager.set('greetings', 'Hello World, Fucke Yeahhhh');
+    await this.cacheManager.set('greetings', 'Hello World, Fucke Yeahh');
     const hello: string = await this.cacheManager.get('greetings');
     const todos: Todo[] = await this.model.find().exec();
 
