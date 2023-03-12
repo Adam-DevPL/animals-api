@@ -7,6 +7,7 @@ import { RedisCacheModule } from './redis-cache/redis-cache.module';
 import { Module } from '@nestjs/common';
 import { MongooseConfigModule } from './mongoose-config/mongoose-config.module';
 import { MongooseConfigService } from './mongoose-config/mongoose-config.service';
+import { AnimalsModule } from './animals/animals.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { MongooseConfigService } from './mongoose-config/mongoose-config.service
     MongooseModule.forFeature([{ name: Todo.name, schema: TodoSchema }]),
     RedisCacheModule,
     MongooseConfigModule,
+    AnimalsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
