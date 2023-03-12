@@ -1,11 +1,10 @@
-import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { redisStore } from 'cache-manager-redis-store';
 import { AppController } from './app.controller';
 import { Todo, TodoSchema } from './app.schema';
 import { AppService } from './app.service';
 import { RedisCacheModule } from './animals/redis-cache/redis-cache.module';
+import { Module } from '@nestjs/common';
 
 @Module({
   imports: [
