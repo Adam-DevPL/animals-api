@@ -5,6 +5,7 @@ import { redisStore } from 'cache-manager-redis-store';
 import { AppController } from './app.controller';
 import { Todo, TodoSchema } from './app.schema';
 import { AppService } from './app.service';
+import { RedisCacheModule } from './animals/redis-cache/redis-cache.module';
 
 @Module({
   imports: [
@@ -31,17 +32,18 @@ import { AppService } from './app.service';
       },
       inject: [ConfigService],
     }),
-    CacheModule.register({
-      isGlobal: true,
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        store: redisStore,
-        host: configService.get('REDIS_HOST'),
-        port: configService.get('REDIS_PORT'),
-      }),
-    }),
+    // CacheModule.register({
+    //   isGlobal: true,
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: async (configService: ConfigService) => ({
+    //     store: redisStore,
+    //     host: configService.get('REDIS_HOST'),
+    //     port: configService.get('REDIS_PORT'),
+    //   }),
+    // }),
     MongooseModule.forFeature([{ name: Todo.name, schema: TodoSchema }]),
+    RedisCacheModule,
   ],
   controllers: [AppController],
   providers: [AppService],

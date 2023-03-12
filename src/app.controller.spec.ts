@@ -10,16 +10,7 @@ describe('AppController', () => {
     const app: TestingModule = await Test.createTestingModule({
       imports: [CacheModule],
       controllers: [AppController],
-      providers: [
-        AppService,
-        {
-          provide: CACHE_MANAGER,
-          useValue: {
-            get: () => 'any value',
-            set: () => jest.fn(),
-          },
-        },
-      ],
+      providers: [AppService],
     }).compile();
 
     appController = app.get<AppController>(AppController);
