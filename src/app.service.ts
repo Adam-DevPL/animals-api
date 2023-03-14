@@ -17,7 +17,7 @@ export class AppService {
     const todos: Todo[] = await this.model.find().exec();
 
     const createTodoDto: CreateTodoDto = {
-      title: 'test',
+      title: 'last test',
       description: 'test',
     };
 
