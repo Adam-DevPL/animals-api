@@ -13,8 +13,10 @@ export class MongooseConfigService implements MongooseOptionsFactory {
     const pass = this.configService.get<string>('MONGO_PASSWORD');
     const host = this.configService.get<string>('MONGO_HOST');
     const port = this.configService.get<string>('MONGO_PORT');
+    const db = this.configService.get<string>('MONGO_DATABASE');
     return {
       uri: `mongodb://${user}:${pass}@${host}:${port}/?authSource=admin`,
+      dbName: db,
       useNewUrlParser: true,
       useUnifiedTopology: true,
     };
