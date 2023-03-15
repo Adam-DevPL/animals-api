@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ParamsWithId } from 'src/validations/id.validator';
 import { AnimalsController } from './animals.controller';
 import { AnimalsService } from './animals.service';
 
@@ -9,7 +10,15 @@ describe('AnimalsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AnimalsController],
-      providers: [AnimalsService],
+      providers: [
+        AnimalsService,
+        {
+          provide: ParamsWithId,
+          useValue: {
+            get: jest.fn().mockResolvedValue('id'),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<AnimalsController>(AnimalsController);
