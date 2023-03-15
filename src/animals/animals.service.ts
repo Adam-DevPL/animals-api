@@ -15,7 +15,7 @@ export class AnimalsService {
   }
 
   async findOne(id: string) {
-    const animal = await this.animalModel.findById(id);
+    const animal = await this.animalModel.findById({ _id: { $eq: id } });
     if (!animal) {
       throw new NotFoundException();
     }
@@ -32,7 +32,7 @@ export class AnimalsService {
 
   async update(id: string, animalData: AnimalDto) {
     const animal = await this.animalModel
-      .findByIdAndUpdate(id, animalData)
+      .findByIdAndUpdate({ _id: { $eq: id } }, { $eq: animalData })
       .setOptions({ overwrite: true, new: true });
     if (!animal) {
       throw new NotFoundException();

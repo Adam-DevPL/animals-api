@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ParamsWithId } from 'src/validations/id.validator';
 import { AnimalsController } from './animals.controller';
 
 describe('AnimalsController', () => {
@@ -6,6 +7,7 @@ describe('AnimalsController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [ParamsWithId],
       controllers: [AnimalsController],
     }).compile();
 
