@@ -27,6 +27,8 @@
     "@nestjs/platform-express": "^9.0.0",
     "cache-manager": "^5.1.7",
     "cache-manager-redis-store": "^3.0.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "mongoose": "^6.10.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
@@ -69,6 +71,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    }
   }
 }
