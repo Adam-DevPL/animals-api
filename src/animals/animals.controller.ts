@@ -8,22 +8,22 @@ export class AnimalsController {
   constructor(private readonly animalsService: AnimalsService) {}
 
   @Get('/all')
-  async getAllPosts() {
+  async getAllAnimals() {
     return this.animalsService.findAll();
   }
 
-  @Get('animal/:id')
-  async getPost(@Param() { id }: ParamsWithId) {
-    return this.animalsService.findOne(id);
-  }
+  // @Get('animal/:id')
+  // async getAnimal(@Param() { id }: ParamsWithId) {
+  //   return this.animalsService.findOne(id);
+  // }
 
-  @Post('/add')
-  async createPost(@Body() post: AnimalDto) {
-    return this.animalsService.create(post);
-  }
+  // @Post('/add')
+  // async createAnimal(@Body() animal: AnimalDto) {
+  //   return this.animalsService.create(animal);
+  // }
 
-  @Put('animal/:id')
-  async updatePost(@Param() { id }: ParamsWithId, @Body() post: AnimalDto) {
-    return this.animalsService.update(id, post);
-  }
+  // @Put('animal/:id')
+  // async updateAnimal(@Param() { id }: ParamsWithId, @Body() animal: AnimalDto) {
+  //   return this.animalsService.update(id, animal);
+  // }
 }
