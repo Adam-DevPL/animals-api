@@ -1,13 +1,18 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ParamsWithId } from 'src/validations/id.validator';
 import { AnimalsService } from './animals.service';
 import { AnimalDto } from './dto/animal.dto';
 
+@ApiTags('animals')
 @Controller('animals')
 export class AnimalsController {
   constructor(private readonly animalsService: AnimalsService) {}
 
   @Get('/all')
+  @ApiOperation({ summary: 'Get all animals from the api' })
+  @ApiResponse({ status: 200, description: 'Get all data' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
   async getAllAnimals() {
     return this.animalsService.findAll();
   }
