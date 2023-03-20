@@ -10,3 +10,14 @@ exports[`AnimalsService findAll should find all animals 1`] = `
   },
 ]
 `;
+
+exports[`AnimalsService findOne should return one animal 1`] = `
+{
+  "animalName": "Human",
+  "createdAt": 2023-03-19T18:27:12.933Z,
+  "description": "test description",
+  "type": "MAMMALS",
+}
+`;
+
+exports[`AnimalsService findOne should throw error NotFoundException --> Not Found, when animal does not exist 1`] = `[NotFoundException: Not Found]`;

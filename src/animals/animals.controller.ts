@@ -1,5 +1,14 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ParamsWithId } from 'src/validations/id.validator';
 import { AnimalsService } from './animals.service';
 import { AnimalDto } from './dto/animal.dto';
@@ -17,10 +26,19 @@ export class AnimalsController {
     return this.animalsService.findAll();
   }
 
-  // @Get('animal/:id')
-  // async getAnimal(@Param() { id }: ParamsWithId) {
-  //   return this.animalsService.findOne(id);
-  // }
+  @Get('animal/:id')
+  @ApiParam({
+    name: 'id',
+    description: 'Gets the Animal id',
+  })
+  @ApiOperation({ summary: 'Get an animal with a given id' })
+  @ApiOkResponse({ description: 'The resources were returned successfully' })
+  @ApiBadRequestResponse({ description: 'Incorrect id number' })
+  @ApiNotFoundResponse({ description: 'Animal not found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  async getAnimal(@Param() { id }: ParamsWithId) {
+    return this.animalsService.findOne(id);
+  }
 
   // @Post('/add')
   // async createAnimal(@Body() animal: AnimalDto) {

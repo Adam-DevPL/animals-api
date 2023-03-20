@@ -1,12 +1,6 @@
-import {
-  CACHE_MANAGER,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { Cache } from 'cache-manager';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { AnimalDto } from './dto/animal.dto';
 import { Animal, AnimalDocument } from './schemas/animal.schema';
 
@@ -20,13 +14,16 @@ export class AnimalsService {
     return this.animalModel.find();
   }
 
-  // async findOne(id: string) {
-  //   const animal = await this.animalModel.findById({ _id: { $eq: id } });
-  //   if (!animal) {
-  //     throw new NotFoundException();
-  //   }
-  //   return animal;
-  // }
+  async findOne(id: string) {
+    const animal = await this.animalModel.findById({
+      _id: new Types.ObjectId(id),
+    });
+
+    if (!animal) {
+      throw new NotFoundException();
+    }
+    return animal;
+  }
 
   // create(postData: AnimalDto) {
   //   const createdAnimal = new this.animalModel({

@@ -1,5 +1,9 @@
+import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 import { AnimalType } from 'src/types/animals.type';
+import { ParamsWithId } from 'src/validations/id.validator';
 import { AnimalsController } from '../animals.controller';
 import { AnimalsService } from '../animals.service';
 import { Animal } from '../schemas/animal.schema';
@@ -24,6 +28,7 @@ describe('AnimalsController', () => {
           provide: AnimalsService,
           useValue: {
             findAll: jest.fn().mockResolvedValue([animalStub]),
+            findOne: jest.fn().mockResolvedValue(animalStub),
           },
         },
       ],
@@ -35,8 +40,51 @@ describe('AnimalsController', () => {
 
   describe('getAllAnimals', () => {
     it('should return an array of animals', async () => {
+      //whem
       const result = await animalsController.getAllAnimals();
+
+      //then
       expect(result).toMatchSnapshot();
+    });
+  });
+
+  describe('getAnimal', () => {
+    it('should return an animal', async () => {
+      // given
+      const id: ParamsWithId = { id: '507f1f77bcf86cd799439011' }; // example of id, correct with mongodb policy
+
+      //when
+      const result = await animalsController.getAnimal(id);
+
+      //then
+      expect(result).toMatchSnapshot();
+    });
+
+    it('should throw error when animal not found', async () => {
+      //given
+      jest.spyOn(animalsService, 'findOne').mockImplementation(() => {
+        throw new NotFoundException();
+      });
+
+      //then
+      await expect(
+        animalsController.getAnimal({
+          id: '507f1f77bcf86cd799439011',
+        }),
+      ).rejects.toMatchSnapshot();
+    });
+
+    it('should throw error when id is not mongodb id', async () => {
+      //given
+      const incorrectId = { id: 123 };
+      const myObject = plainToInstance(ParamsWithId, incorrectId);
+
+      //when
+      const errors = await validate(myObject);
+
+      //then
+      expect(errors.length).not.toBe(0);
+      expect(JSON.stringify(errors)).toContain(`id must be a mongodb id`);
     });
   });
 });

@@ -22,6 +22,7 @@ services:
       - mongo-database
       - mongo-express
       - redis
+      - redis-commander
     volumes:
       - .:/usr/src/app
     restart: unless-stopped
@@ -85,7 +86,18 @@ services:
     ports:
       - ${REDIS_PORT}:${REDIS_PORT}
     volumes:
-      - redis:/data/rdcache
+      - redis:/data
+    networks:
+      - animals-api-network
+
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
+    image: ghcr.io/joeferner/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis-cache:6379
+    ports:
+      - "8085:8081"
     networks:
       - animals-api-network
 
@@ -96,3 +108,4 @@ networks:
 volumes:
   mongo-data:
   redis:
+    driver: local
