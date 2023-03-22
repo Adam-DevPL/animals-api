@@ -1,32 +1,6 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { Response } from 'express';
-
-type ErrorResp = {
-  status: number;
-  message: string;
-};
-
-const getStatusAndErrorMsg = <T>(exception: T): ErrorResp => {
-  console.log(exception);
-
-  if (exception instanceof HttpException) {
-    return {
-      status: exception.getStatus(),
-      message: exception['response']['message'],
-    };
-  }
-
-  return {
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
-    message: 'Internal server error',
-  };
-};
+import { getStatusAndErrorMsg } from 'src/utils/error-response';
 
 @Catch()
 export class GlobalExceptionFilter<T> implements ExceptionFilter {

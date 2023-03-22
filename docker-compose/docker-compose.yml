@@ -7,7 +7,7 @@ services:
     build:
       context: .
       target: development
-      dockerfile: ./Dockerfile
+      dockerfile: ../Dockerfile
     command: npm run start:debug
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
@@ -32,7 +32,7 @@ services:
     build:
       context: .
       target: production
-      dockerfile: ./Dockerfile
+      dockerfile: ../Dockerfile
     command: npm run start:prod
     environment:
       - MONGO_HOST=${MONGO_HOST}
@@ -85,7 +85,7 @@ services:
     ports:
       - ${REDIS_PORT}:${REDIS_PORT}
     volumes:
-      - redis:/data/rdcache
+      - redis:/data
     networks:
       - animals-api-network
 

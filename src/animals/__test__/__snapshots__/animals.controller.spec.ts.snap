@@ -10,3 +10,5 @@ exports[`AnimalsController getAllAnimals should return an array of animals 1`] =
   },
 ]
 `;
+
+exports[`AnimalsController getAllAnimals should throw Internal Server Error when something goes wrong with mongodb 1`] = `Promise {}`;

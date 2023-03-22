@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AnimalType } from 'src/types/animals.type';
 import { AnimalsController } from '../animals.controller';
