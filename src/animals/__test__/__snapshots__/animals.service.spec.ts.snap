@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AnimalsService findAll should find all animals 1`] = `
+[
+  {
+    "animalName": "Human",
+    "createdAt": 2023-03-19T18:27:12.933Z,
+    "description": "test description",
+    "type": "MAMMALS",
+  },
+]
+`;

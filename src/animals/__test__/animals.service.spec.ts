@@ -1,12 +1,18 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AnimalType } from 'src/types/animals.type';
 import { AnimalsService } from '../animals.service';
 import { Animal } from '../schemas/animal.schema';
-import { AnimalModel } from './__mocks__/animal.model';
+
+const animalStub: Animal = {
+  animalName: 'Human',
+  type: AnimalType.MAMMALS,
+  createdAt: new Date('2023-03-19T18:27:12.933Z'),
+  description: 'test description',
+};
 
 describe('AnimalsService', () => {
   let service: AnimalsService;
-  let model: AnimalModel;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,17 +20,25 @@ describe('AnimalsService', () => {
         AnimalsService,
         {
           provide: getModelToken(Animal.name),
-          useClass: AnimalModel,
+          useValue: {
+            find: jest.fn().mockResolvedValue([animalStub]),
+          },
         },
       ],
     }).compile();
 
     service = module.get<AnimalsService>(AnimalsService);
-    model = module.get<AnimalModel>(getModelToken(Animal.name));
     jest.clearAllMocks();
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('findAll', () => {
+    it('should find all animals', async () => {
+      const result = await service.findAll();
+      expect(result).toMatchSnapshot();
+    });
   });
 });

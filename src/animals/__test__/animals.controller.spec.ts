@@ -1,38 +1,43 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ParamsWithId } from 'src/validations/id.validator';
+import { InternalServerErrorException } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { AnimalType } from 'src/types/animals.type';
 import { AnimalsController } from '../animals.controller';
 import { AnimalsService } from '../animals.service';
 import { Animal } from '../schemas/animal.schema';
 
-jest.mock('../animals.service');
+const animalStub: Animal = {
+  animalName: 'Human',
+  type: AnimalType.MAMMALS,
+  createdAt: new Date('2023-03-19T18:27:12.933Z'),
+  description: 'test description',
+};
 
 describe('AnimalsController', () => {
-  let controller: AnimalsController;
-  let service: AnimalsService;
+  let animalsController: AnimalsController;
+  let animalsService: AnimalsService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleRef = await Test.createTestingModule({
       controllers: [AnimalsController],
-      providers: [AnimalsService],
+      providers: [
+        AnimalsService,
+        {
+          provide: AnimalsService,
+          useValue: {
+            findAll: jest.fn().mockResolvedValue([animalStub]),
+          },
+        },
+      ],
     }).compile();
 
-    controller = module.get<AnimalsController>(AnimalsController);
-    service = module.get<AnimalsService>(AnimalsService);
-    jest.clearAllMocks();
+    animalsController = moduleRef.get<AnimalsController>(AnimalsController);
+    animalsService = moduleRef.get<AnimalsService>(AnimalsService);
   });
 
-  describe('getAnimal', () => {
-    describe('when getAnimal is called', () => {
-      let animals: Animal[];
-
-      beforeEach(async () => {
-        const id = new ParamsWithId();
-        animals = await controller.getAllAnimals();
-      });
-
-      it('should call animalsService', () => {
-        expect(service.findAll).toBeCalled();
-      });
+  describe('getAllAnimals', () => {
+    it('should return an array of animals', async () => {
+      const result = await animalsController.getAllAnimals();
+      expect(result).toMatchSnapshot();
     });
   });
 });

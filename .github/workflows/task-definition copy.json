@@ -1,4 +1,5 @@
 {
+  "taskDefinitionArn": "arn:aws:ecs:eu-west-1:741395632136:task-definition/animals-api:5",
   "containerDefinitions": [
       {
           "name": "mongodb",
@@ -124,8 +125,46 @@
   "taskRoleArn": "arn:aws:iam::741395632136:role/ecsTaskExecutionRole",
   "executionRoleArn": "arn:aws:iam::741395632136:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
+  "revision": 5,
   "volumes": [],
+  "status": "ACTIVE",
+  "requiresAttributes": [
+      {
+          "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+      },
+      {
+          "name": "ecs.capability.execution-role-awslogs"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.ecr-auth"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.17"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.task-iam-role"
+      },
+      {
+          "name": "ecs.capability.execution-role-ecr-pull"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+      },
+      {
+          "name": "ecs.capability.task-eni"
+      },
+      {
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+      }
+  ],
   "placementConstraints": [],
+  "compatibilities": [
+      "EC2",
+      "FARGATE"
+  ],
   "requiresCompatibilities": [
       "FARGATE"
   ],
@@ -135,5 +174,7 @@
       "cpuArchitecture": "X86_64",
       "operatingSystemFamily": "LINUX"
   },
+  "registeredAt": "2023-03-11T13:55:39.802Z",
+  "registeredBy": "arn:aws:iam::741395632136:root",
   "tags": []
 }

@@ -1,29 +1,30 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ParamsWithId } from 'src/validations/id.validator';
+import { Controller, Get } from '@nestjs/common';
+import {
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AnimalsService } from './animals.service';
-import { AnimalDto } from './dto/animal.dto';
+import { ErrorDto } from './dto/error.dto';
+import { AnimalWithId } from './schemas/animal.schema';
 
+@ApiTags('animals')
 @Controller('animals')
 export class AnimalsController {
   constructor(private readonly animalsService: AnimalsService) {}
 
   @Get('/all')
+  @ApiOperation({ summary: 'Get all animals from the api' })
+  @ApiOkResponse({
+    description: 'Get all data',
+    type: AnimalWithId,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error',
+    type: ErrorDto,
+  })
   async getAllAnimals() {
     return this.animalsService.findAll();
   }
-
-  // @Get('animal/:id')
-  // async getAnimal(@Param() { id }: ParamsWithId) {
-  //   return this.animalsService.findOne(id);
-  // }
-
-  // @Post('/add')
-  // async createAnimal(@Body() animal: AnimalDto) {
-  //   return this.animalsService.create(animal);
-  // }
-
-  // @Put('animal/:id')
-  // async updateAnimal(@Param() { id }: ParamsWithId, @Body() animal: AnimalDto) {
-  //   return this.animalsService.update(id, animal);
-  // }
 }
