@@ -15,6 +15,7 @@ exports[`AnimalsController getAllAnimals should throw an error when there is som
 
 exports[`AnimalsController getAnimal should return an animal 1`] = `
 {
+  "_id": "507f1f77bcf86cd799439011",
   "animalName": "Human",
   "createdAt": 2023-03-19T18:27:12.933Z,
   "description": "test description",
@@ -22,4 +23,20 @@ exports[`AnimalsController getAnimal should return an animal 1`] = `
 }
 `;
 
+exports[`AnimalsController getAnimal should throw Internal Server Error Exception when mongodb fail 1`] = `[InternalServerErrorException: Internal Server Error]`;
+
 exports[`AnimalsController getAnimal should throw error when animal not found 1`] = `[NotFoundException: Not Found]`;
+
+exports[`AnimalsController updateAnimal should throw Interal Servel Error Exception when something goes worng with mongodb connection 1`] = `[InternalServerErrorException: Internal Server Error]`;
+
+exports[`AnimalsController updateAnimal should throw error when animal not found 1`] = `[NotFoundException: Not Found]`;
+
+exports[`AnimalsController updateAnimal should update an animal 1`] = `
+{
+  "_id": "507f1f77bcf86cd799439011",
+  "animalName": "Cat",
+  "createdAt": 2023-03-19T18:27:12.933Z,
+  "description": "description after update",
+  "type": "BIRDS",
+}
+`;

@@ -7,6 +7,7 @@ import { AnimalType } from 'src/types/animals.type';
 import { ParamsWithId } from 'src/validations/id.validator';
 import { AnimalsController } from '../animals.controller';
 import { AnimalsService } from '../animals.service';
+import { UpdateAnimalDto } from '../dto/animal.dto';
 import { Animal } from '../schemas/animal.schema';
 
 const animalStub: Animal = {
@@ -14,6 +15,12 @@ const animalStub: Animal = {
   type: AnimalType.MAMMALS,
   createdAt: new Date('2023-03-19T18:27:12.933Z'),
   description: 'test description',
+};
+
+const animalUpdate: UpdateAnimalDto = {
+  animalName: 'Cat',
+  type: AnimalType.BIRDS,
+  description: 'description after update',
 };
 
 describe('AnimalsController', () => {
@@ -29,7 +36,20 @@ describe('AnimalsController', () => {
           provide: AnimalsService,
           useValue: {
             findAll: jest.fn().mockResolvedValue([animalStub]),
-            findOne: jest.fn().mockResolvedValue(animalStub),
+            findOne: jest
+              .fn()
+              .mockImplementation((id: string) =>
+                Promise.resolve({ _id: id, ...animalStub }),
+              ),
+            update: jest
+              .fn()
+              .mockImplementation((id: string, animalData: UpdateAnimalDto) =>
+                Promise.resolve({
+                  _id: id,
+                  createdAt: new Date('2023-03-19T18:27:12.933Z'),
+                  ...animalData,
+                }),
+              ),
           },
         },
       ],
@@ -78,7 +98,21 @@ describe('AnimalsController', () => {
       //then
       await expect(
         animalsController.getAnimal({
-          id: '507f1f77bcf86cd799439011',
+          id: '507f1f77bcf86cd799439099',
+        }),
+      ).rejects.toMatchSnapshot();
+    });
+
+    it('should throw Internal Server Error Exception when mongodb fail', async () => {
+      //given
+      jest.spyOn(animalsService, 'findOne').mockImplementation(() => {
+        throw new InternalServerErrorException();
+      });
+
+      //then
+      await expect(
+        animalsController.getAnimal({
+          id: '507f1f77bcf86cd799439099',
         }),
       ).rejects.toMatchSnapshot();
     });
@@ -94,6 +128,84 @@ describe('AnimalsController', () => {
       //then
       expect(errors.length).not.toBe(0);
       expect(JSON.stringify(errors)).toContain(`id must be a mongodb id`);
+    });
+  });
+
+  describe('updateAnimal', () => {
+    it('should update an animal', async () => {
+      // given
+      const id: ParamsWithId = { id: '507f1f77bcf86cd799439011' }; // example of id, correct with mongodb policy
+
+      //when
+      const result = await animalsController.updateAnimal(id, animalUpdate);
+
+      //then
+      expect(result.animalName).toEqual(animalUpdate.animalName);
+      expect(result.type).toEqual(animalUpdate.type);
+      expect(result.description).toEqual(animalUpdate.description);
+      expect(result).toMatchSnapshot();
+    });
+
+    it('should throw error when animal not found', async () => {
+      //given
+      jest.spyOn(animalsService, 'update').mockImplementation(() => {
+        throw new NotFoundException();
+      });
+
+      //then
+      await expect(
+        animalsController.updateAnimal(
+          {
+            id: '507f1f77bcf86cd799439099',
+          },
+          animalUpdate,
+        ),
+      ).rejects.toMatchSnapshot();
+    });
+
+    it('should throw error when id is not mongodb id - BadRequestException', async () => {
+      //given
+      const incorrectId = { id: 123 };
+      const myObject = plainToInstance(ParamsWithId, incorrectId);
+
+      //when
+      const errors = await validate(myObject);
+
+      //then
+      expect(errors.length).not.toBe(0);
+      expect(JSON.stringify(errors)).toContain(`id must be a mongodb id`);
+    });
+
+    it('should throw error when property type is not AnimalType - BadRequestException', async () => {
+      //given
+      const incorrectType = { type: 123 };
+      const myObject = plainToInstance(UpdateAnimalDto, incorrectType);
+
+      //when
+      const errors = await validate(myObject);
+
+      //then
+      expect(errors.length).not.toBe(0);
+      expect(JSON.stringify(errors)).toContain(
+        `type must be one of the following values: MAMMALS, BIRDS, REPTILES, AMPHIBIANS, FISH, INVERTEBRATES`,
+      );
+    });
+
+    it('should throw Interal Servel Error Exception when something goes worng with mongodb connection', async () => {
+      //given
+      jest.spyOn(animalsService, 'update').mockImplementation(() => {
+        throw new InternalServerErrorException();
+      });
+
+      //then
+      expect(
+        animalsController.updateAnimal(
+          {
+            id: '507f1f77bcf86cd799439099',
+          },
+          animalUpdate,
+        ),
+      ).rejects.toMatchSnapshot();
     });
   });
 });
