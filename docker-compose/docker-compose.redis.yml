@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis-cache
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    volumes:
+      - redis:/data
+    networks:
+      - animals-api-network
+
+networks:
+  animals-api-network:
+    driver: bridge
+
+volumes:
+  redis:

@@ -11,7 +11,8 @@ import {
 } from '@nestjs/swagger';
 import { ParamsWithId } from 'src/validations/id.validator';
 import { AnimalsService } from './animals.service';
-import { AnimalDto } from './dto/animal.dto';
+import { ErrorDto } from './dto/error.dto';
+import { AnimalWithId } from './schemas/animal.schema';
 
 @ApiTags('animals')
 @Controller('animals')
@@ -20,8 +21,14 @@ export class AnimalsController {
 
   @Get('/all')
   @ApiOperation({ summary: 'Get all animals from the api' })
-  @ApiResponse({ status: 200, description: 'Get all data' })
-  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiOkResponse({
+    description: 'Get all data',
+    type: AnimalWithId,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error',
+    type: ErrorDto,
+  })
   async getAllAnimals() {
     return this.animalsService.findAll();
   }
@@ -40,13 +47,4 @@ export class AnimalsController {
     return this.animalsService.findOne(id);
   }
 
-  // @Post('/add')
-  // async createAnimal(@Body() animal: AnimalDto) {
-  //   return this.animalsService.create(animal);
-  // }
-
-  // @Put('animal/:id')
-  // async updateAnimal(@Param() { id }: ParamsWithId, @Body() animal: AnimalDto) {
-  //   return this.animalsService.update(id, animal);
-  // }
 }

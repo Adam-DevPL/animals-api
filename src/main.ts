@@ -7,13 +7,13 @@ import { GlobalExceptionFilter } from './filterts/globalexceptions.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
-    .setTitle('Animals API')
-    .setDescription('The animals API connected with AWS deploy')
-    .setVersion('1.0')
-    .addTag('animals')
+    .setTitle(process.env.TITLE)
+    .setDescription(process.env.DESC)
+    .setVersion(process.env.VERSION)
+    .addTag(process.env.TAG)
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup(`${process.env.ENDPOINT}`, app, document);
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new GlobalExceptionFilter());
   await app.listen(3000);

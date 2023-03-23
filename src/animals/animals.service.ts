@@ -24,22 +24,4 @@ export class AnimalsService {
     }
     return animal;
   }
-
-  // create(postData: AnimalDto) {
-  //   const createdAnimal = new this.animalModel({
-  //     ...postData,
-  //     createdAt: new Date(),
-  //   });
-  //   return createdAnimal.save();
-  // }
-
-  // async update(id: string, animalData: AnimalDto) {
-  //   const animal = await this.animalModel
-  //     .findByIdAndUpdate({ _id: { $eq: id } }, animalData)
-  //     .setOptions({ overwrite: true, new: true });
-  //   if (!animal) {
-  //     throw new NotFoundException();
-  //   }
-  //   return animal;
-  // }
 }

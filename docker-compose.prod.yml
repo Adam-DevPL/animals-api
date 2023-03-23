@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  prod:
+    container_name: animals_api_prod
+    image: animals-api-prod:1.00
+    build:
+      context: .
+      target: production
+      dockerfile: Dockerfile
+    command: npm run start:prod
+    environment:
+      - MONGO_HOST=${MONGO_HOST}
+      - MONGO_PORT=${MONGO_PORT}
+      - MONGO_USERNAME=${MONGO_USERNAME}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    networks:
+      - animals-api-network
+    depends_on:
+      - mongo-database
+      - redis
+    volumes:
+      - ./:/usr/src/app
+    restart: unless-stopped
+
+networks:
+  animals-api-network:
+    driver: bridge
