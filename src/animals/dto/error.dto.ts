@@ -4,14 +4,14 @@ export class ErrorDto {
   @ApiProperty({
     description: 'status of the error response',
     type: 'Number',
-    example: '500',
+    example: '400 | 404 | 500',
   })
   status: number;
 
   @ApiProperty({
     description: 'error message',
     type: 'String',
-    example: 'Internal server error',
+    example: 'Bad request | Not found | Internal server error',
   })
   message: string;
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
@@ -6,7 +6,6 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { ParamsWithId } from 'src/validations/id.validator';
@@ -23,7 +22,7 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Get all animals from the api' })
   @ApiOkResponse({
     description: 'Get all data',
-    type: AnimalWithId,
+    type: [AnimalWithId],
   })
   @ApiInternalServerErrorResponse({
     description: 'Internal server error',
@@ -39,12 +38,20 @@ export class AnimalsController {
     description: 'Gets the Animal id',
   })
   @ApiOperation({ summary: 'Get an animal with a given id' })
-  @ApiOkResponse({ description: 'The resources were returned successfully' })
-  @ApiBadRequestResponse({ description: 'Incorrect id number' })
-  @ApiNotFoundResponse({ description: 'Animal not found' })
-  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  @ApiOkResponse({
+    description: 'The resources were returned successfully',
+    type: AnimalWithId,
+  })
+  @ApiBadRequestResponse({
+    description: 'Incorrect id number',
+    type: ErrorDto,
+  })
+  @ApiNotFoundResponse({ description: 'Animal not found', type: ErrorDto })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error',
+    type: ErrorDto,
+  })
   async getAnimal(@Param() { id }: ParamsWithId) {
     return this.animalsService.findOne(id);
   }
-
 }

@@ -11,6 +11,8 @@ exports[`AnimalsController getAllAnimals should return an array of animals 1`] =
 ]
 `;
 
+exports[`AnimalsController getAllAnimals should throw an error when there is something wrong with mongodb connection 1`] = `[InternalServerErrorException: Internal Server Error]`;
+
 exports[`AnimalsController getAnimal should return an animal 1`] = `
 {
   "animalName": "Human",

@@ -47,6 +47,14 @@ describe('AnimalsController', () => {
       //then
       expect(result).toMatchSnapshot();
     });
+
+    it('should throw an error when there is something wrong with mongodb connection', async () => {
+      jest.spyOn(animalsService, 'findAll').mockImplementation(() => {
+        throw new InternalServerErrorException();
+      });
+
+      expect(animalsController.getAllAnimals()).rejects.toMatchSnapshot();
+    });
   });
 
   describe('getAnimal', () => {

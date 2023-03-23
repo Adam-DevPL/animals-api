@@ -13,8 +13,9 @@ export class Animal {
   animalName: string;
 
   @ApiProperty({
-    description: `One of Animal types - ${Object.values(AnimalType)}`,
+    description: `One of Animal types - see Enum`,
     type: 'AnimalType',
+    enum: AnimalType,
     example: AnimalType.MAMMALS,
   })
   @Prop({ required: true })

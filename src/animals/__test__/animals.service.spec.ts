@@ -45,6 +45,14 @@ describe('AnimalsService', () => {
       const result = await service.findAll();
       expect(result).toMatchSnapshot();
     });
+
+    it('should throw Internal Exception Error when something goes wrong with mongodb connection', async () => {
+      jest.spyOn(model, 'find').mockImplementation(() => {
+        throw new Error('mongodb down');
+      });
+
+      expect(service.findAll).rejects.toMatchSnapshot();
+    });
   });
 
   describe('findOne', () => {

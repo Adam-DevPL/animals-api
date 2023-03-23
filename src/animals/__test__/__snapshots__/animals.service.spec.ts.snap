@@ -11,6 +11,8 @@ exports[`AnimalsService findAll should find all animals 1`] = `
 ]
 `;
 
+exports[`AnimalsService findAll should throw Internal Exception Error when something goes wrong with mongodb connection 1`] = `[InternalServerErrorException: Internal Server Error]`;
+
 exports[`AnimalsService findOne should return one animal 1`] = `
 {
   "animalName": "Human",
