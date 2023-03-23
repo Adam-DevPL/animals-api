@@ -8,11 +8,8 @@ on:
   workflow_call:
 
 jobs:
-  code_analyze:
-    uses: ./.github/workflows/codeql-analysis.yml
   test:
     name: 'Run unit tests'
-    needs: [code_analyze]
     # Specify the OS we want the workflow to run on
     runs-on: ubuntu-latest
     # Define the steps for this job
