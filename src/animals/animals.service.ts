@@ -75,17 +75,16 @@ export class AnimalsService {
         throw new BadRequestException('Animal already exist in database');
       }
 
-      const newAnimal: AnimalDocument = new this.animalModel({
+      const newAnimal: AnimalDocument = await this.animalModel.create({
         createdAt: new Date(),
         ...animalData,
       });
-      await newAnimal.save();
 
       return newAnimal as AnimalWithId;
     } catch (err) {
       console.error(err);
-      if (err instanceof BadGatewayException) {
-        throw new BadRequestException();
+      if (err instanceof BadRequestException) {
+        throw new BadRequestException(err.message);
       }
       throw new InternalServerErrorException();
     }
