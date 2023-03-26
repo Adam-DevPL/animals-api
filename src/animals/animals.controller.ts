@@ -80,7 +80,7 @@ export class AnimalsController {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async addAnimalsList(
+  async addAnimalsListWithType(
     @Body() { animalsNames }: AnimalNameArrayDto,
     @Param() type: AnimalTypeParam,
   ) {
