@@ -1,5 +1,4 @@
 import {
-  BadGatewayException,
   BadRequestException,
   Injectable,
   InternalServerErrorException,
@@ -67,8 +66,8 @@ export class AnimalsService {
   async create(animalData: AnimalDto) {
     try {
       const animal: AnimalDocument = await this.animalModel.findOne({
-        animalName: animalData.animalName,
-        animalType: animalData.type,
+        animalName: { $q: animalData.animalName },
+        animalType: { $q: animalData.type },
       });
 
       if (animal) {
