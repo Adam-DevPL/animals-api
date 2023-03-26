@@ -8,7 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AnimalType } from 'src/types/animals.type';
 import { AnimalTypeParam } from 'src/validations/type.validator';
-import { AnimalDto, AnimalNameDto } from './dto/animal.dto';
+import { AnimalDto, UpdateAnimalDto, AnimalNameDto } from './dto/animal.dto';
 import { Animal, AnimalDocument, AnimalWithId } from './schemas/animal.schema';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class AnimalsService {
 
   async findAll() {
     try {
-      return this.animalModel.find();
+      return (await this.animalModel.find({})) as AnimalWithId[];
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException();
@@ -39,6 +39,77 @@ export class AnimalsService {
       console.error(err);
       if (err instanceof NotFoundException) {
         throw new NotFoundException();
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async update(id: string, animalData: UpdateAnimalDto) {
+    try {
+      const animal: AnimalDocument = await this.animalModel.findByIdAndUpdate(
+        { _id: new Types.ObjectId(id) },
+        animalData,
+        { new: true },
+      );
+
+      if (!animal) {
+        throw new NotFoundException();
+      }
+
+      return animal as AnimalWithId;
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw new NotFoundException();
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async create(animalData: AnimalDto) {
+    try {
+      const animal: AnimalDocument = await this.animalModel.findOne({
+        animalName: { $q: animalData.animalName },
+        animalType: { $q: animalData.type },
+      });
+
+      if (animal) {
+        throw new BadRequestException('Animal already exist in database');
+      }
+
+      const newAnimal: AnimalDocument = await this.animalModel.create({
+        createdAt: new Date(),
+        ...animalData,
+      });
+
+      return newAnimal as AnimalWithId;
+    } catch (err) {
+      console.error(err);
+      if (err instanceof BadRequestException) {
+        throw new BadRequestException(err.message);
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async addAnimals(animalsList: AnimalDto[]) {
+    try {
+      const allAnimals: AnimalWithId[] = await this.findAll();
+      const alreadyExistAnimals = animalsList.filter((animal) =>
+        allAnimals.some(
+          ({ animalName, type }) =>
+            animal.animalName === animalName && animal.type === type,
+        ),
+      );
+      if (alreadyExistAnimals.length !== 0) {
+        throw new BadRequestException('Animals already exist in database');
+      }
+      return await this.animalModel.insertMany(
+        animalsList.map((animal) => ({ createdAt: new Date(), ...animal })),
+      );
+    } catch (err) {
+      console.error(err);
+      if (err instanceof BadRequestException) {
+        throw new BadRequestException(err.message);
       }
       throw new InternalServerErrorException();
     }

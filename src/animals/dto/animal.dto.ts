@@ -1,3 +1,4 @@
+import { Optional } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -40,6 +41,44 @@ export class AnimalDto extends AnimalNameDto {
   @IsOptional()
   @IsString()
   description?: string;
+}
+
+export class UpdateAnimalDto {
+  @ApiPropertyOptional({
+    description: 'Animal name',
+    type: 'string',
+    example: 'Cat',
+  })
+  @IsOptional()
+  @IsString()
+  animalName?: string;
+
+  @ApiPropertyOptional({
+    description: `One of Animal types - see Enum`,
+    enum: AnimalType,
+    type: 'AnimalType',
+    example: AnimalType.MAMMALS,
+  })
+  @Optional()
+  @IsEnum(AnimalType)
+  type?: AnimalType;
+
+  @ApiPropertyOptional({
+    description: 'Optional description',
+    type: 'string',
+    example: 'test description',
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
+}
+
+export class AnimalDtoArray {
+  @ApiProperty({ description: 'Array with animals', type: [AnimalDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AnimalDto)
+  animals: AnimalDto[];
 }
 
 export class AnimalNameArrayDto {

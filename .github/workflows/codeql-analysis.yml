@@ -6,14 +6,15 @@
 name: 'Code scanning'
 
 on:
-  push:
-    branches: ['main']
   pull_request:
     branches: ['main', 'develop']
 
 jobs:
+  tests:
+    uses: ./.github/workflows/ci.yml
   analyze:
     name: Analyze code
+    needs: [tests]
     runs-on: ubuntu-latest
     permissions:
       actions: read
