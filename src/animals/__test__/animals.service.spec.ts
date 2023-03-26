@@ -1,11 +1,11 @@
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Error, Model } from 'mongoose';
 import { AnimalType } from 'src/types/animals.type';
 import { AnimalsService } from '../animals.service';
-import { UpdateAnimalDto } from '../dto/animal.dto';
-import { Animal, AnimalDocument } from '../schemas/animal.schema';
+import { AnimalDto, UpdateAnimalDto } from '../dto/animal.dto';
+import { Animal, AnimalDocument, AnimalWithId } from '../schemas/animal.schema';
 
 const animalStub: Animal = {
   animalName: 'Human',
@@ -20,6 +20,12 @@ const animalUpdate: UpdateAnimalDto = {
   description: 'description after update',
 };
 
+const animalDto: AnimalDto = {
+  animalName: 'Dog',
+  type: AnimalType.MAMMALS,
+  description: 'new dog created',
+};
+
 describe('AnimalsService', () => {
   let service: AnimalsService;
   let model: Model<AnimalDocument>;
@@ -32,6 +38,7 @@ describe('AnimalsService', () => {
           provide: getModelToken(Animal.name),
           useValue: {
             find: jest.fn().mockResolvedValue([animalStub]),
+            findOne: jest.fn().mockResolvedValue(null),
             findById: jest
               .fn()
               .mockImplementation((id: string) =>
@@ -46,6 +53,12 @@ describe('AnimalsService', () => {
                   ...animalData,
                 }),
               ),
+            create: jest.fn().mockImplementation((animalData: AnimalDto) =>
+              Promise.resolve({
+                _id: '507f1f77bcf86cd799439011',
+                ...animalData,
+              }),
+            ),
           },
         },
       ],
@@ -132,6 +145,36 @@ describe('AnimalsService', () => {
       await expect(
         service.update('507f1f77bcf86cd799439099', animalUpdate),
       ).rejects.toMatchSnapshot();
+    });
+  });
+
+  describe('create', () => {
+    it('should return newly created animal', async () => {
+      //when
+      const result = await service.create(animalDto);
+
+      //then
+      expect({
+        ...result,
+        createdAt: new Date('2022-02-02'),
+      }).toMatchSnapshot();
+    });
+
+    it('should throw error BadRequestException --> Animal already exist in database', async () => {
+      //given
+      jest.spyOn(model, 'findOne').mockResolvedValue({ _id: 'id' });
+
+      //then
+      await expect(service.create(animalDto)).rejects.toMatchSnapshot();
+    });
+
+    it('should throw error InternalServerErrorException when mongodb fails', async () => {
+      jest.spyOn(model, 'findOne').mockImplementation(() => {
+        throw new Error('mongo fails');
+      });
+
+      //then
+      await expect(service.create(animalDto)).rejects.toMatchSnapshot();
     });
   });
 });

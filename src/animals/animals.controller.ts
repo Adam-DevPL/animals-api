@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBody,
+  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -11,7 +12,7 @@ import {
 } from '@nestjs/swagger';
 import { ParamsWithId } from 'src/validations/id.validator';
 import { AnimalsService } from './animals.service';
-import { UpdateAnimalDto } from './dto/animal.dto';
+import { AnimalDto, UpdateAnimalDto } from './dto/animal.dto';
 import { ErrorDto } from './dto/error.dto';
 import { AnimalWithId } from './schemas/animal.schema';
 
@@ -20,7 +21,7 @@ import { AnimalWithId } from './schemas/animal.schema';
 export class AnimalsController {
   constructor(private readonly animalsService: AnimalsService) {}
 
-  @Get('/all')
+  @Get('/')
   @ApiOperation({ summary: 'Get all animals from the api' })
   @ApiOkResponse({
     description: 'Get all data',
@@ -30,7 +31,7 @@ export class AnimalsController {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async getAllAnimals() {
+  async getAllAnimals(): Promise<AnimalWithId[]> {
     return this.animalsService.findAll();
   }
 
@@ -82,5 +83,24 @@ export class AnimalsController {
     @Body() animal: UpdateAnimalDto,
   ) {
     return this.animalsService.update(id, animal);
+  }
+
+  @Post('add')
+  @ApiBody({ type: AnimalDto })
+  @ApiOperation({ summary: 'Create a new animal' })
+  @ApiCreatedResponse({
+    description: 'The animal was created successfully',
+    type: AnimalWithId,
+  })
+  @ApiBadRequestResponse({
+    description: 'Incorrect  data or data already exist - BadRequest',
+    type: ErrorDto,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error',
+    type: ErrorDto,
+  })
+  async createAnimal(@Body() animal: AnimalDto) {
+    return this.animalsService.create(animal);
   }
 }
