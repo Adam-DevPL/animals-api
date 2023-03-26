@@ -1,6 +1,14 @@
 import { Optional } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsEnum, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsNotEmpty,
+  IsEnum,
+  IsOptional,
+  IsArray,
+  ValidateNested,
+} from 'class-validator';
 import { AnimalType } from 'src/types/animals.type';
 
 export class AnimalDto {
@@ -61,4 +69,12 @@ export class UpdateAnimalDto {
   @IsOptional()
   @IsString()
   description?: string;
+}
+
+export class AnimalDtoArray {
+  @ApiProperty({ description: 'Array with animals', type: [AnimalDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AnimalDto)
+  animals: AnimalDto[];
 }

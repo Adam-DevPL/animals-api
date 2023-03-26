@@ -7,7 +7,7 @@ import { AnimalType } from 'src/types/animals.type';
 import { ParamsWithId } from 'src/validations/id.validator';
 import { AnimalsController } from '../animals.controller';
 import { AnimalsService } from '../animals.service';
-import { AnimalDto, UpdateAnimalDto } from '../dto/animal.dto';
+import { AnimalDto, UpdateAnimalDto, AnimalDtoArray } from '../dto/animal.dto';
 import { Animal } from '../schemas/animal.schema';
 
 const animalStub: Animal = {
@@ -28,6 +28,17 @@ const animalDto: AnimalDto = {
   type: AnimalType.MAMMALS,
   description: 'new dog created',
 };
+
+const animalsList: AnimalDto[] = [
+  {
+    animalName: 'Elephant',
+    type: AnimalType.MAMMALS,
+  },
+  {
+    animalName: 'Lion',
+    type: AnimalType.MAMMALS,
+  },
+];
 
 describe('AnimalsController', () => {
   let animalsController: AnimalsController;
@@ -62,6 +73,20 @@ describe('AnimalsController', () => {
                 createdAt: new Date('2023-03-19T18:27:12.933Z'),
                 ...animalData,
               }),
+            ),
+            addAnimals: jest.fn().mockImplementation((animals) =>
+              Promise.resolve([
+                {
+                  _id: 'id1',
+                  createdAt: '2022-02-02',
+                  ...animals[0],
+                },
+                {
+                  _id: 'id2',
+                  createdAt: '2022-02-02',
+                  ...animals[1],
+                },
+              ]),
             ),
           },
         },
@@ -270,6 +295,63 @@ describe('AnimalsController', () => {
       //then
       expect(
         animalsController.createAnimal(animalDto),
+      ).rejects.toMatchSnapshot();
+    });
+  });
+
+  describe('addAnimalsLsit', () => {
+    it('should add list of animals', async () => {
+      //given
+      const animalDtoArray = {
+        animals: animalsList,
+      };
+      //when
+      const result = await animalsController.addAnimalsList(animalDtoArray);
+
+      //then
+      expect(result).toMatchSnapshot();
+    });
+
+    it('should throw error - BadRequestException - when one of animals already exist', async () => {
+      //given
+      const animalDtoArray = {
+        animals: animalsList,
+      };
+      jest.spyOn(animalsService, 'addAnimals').mockImplementation(() => {
+        throw new BadRequestException('Animals already exist in database');
+      });
+
+      //then
+      await expect(
+        animalsController.addAnimalsList(animalDtoArray),
+      ).rejects.toMatchSnapshot();
+    });
+
+    it('should throw error when no array as an entry DTO- BadRequestException', async () => {
+      //given
+      const incorrectType = { type: 123 };
+      const myObject = plainToInstance(AnimalDtoArray, incorrectType);
+
+      //when
+      const errors = await validate(myObject);
+
+      //then
+      expect(errors.length).not.toBe(0);
+      expect(JSON.stringify(errors)).toContain(`animals must be an array`);
+    });
+
+    it('should throw Interal Servel Error Exception when something goes worng with mongodb connection', async () => {
+      //given
+      const animalDtoArray = {
+        animals: animalsList,
+      };
+      jest.spyOn(animalsService, 'addAnimals').mockImplementation(() => {
+        throw new InternalServerErrorException();
+      });
+
+      //then
+      expect(
+        animalsController.addAnimalsList(animalDtoArray),
       ).rejects.toMatchSnapshot();
     });
   });

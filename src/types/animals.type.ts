@@ -1,3 +1,5 @@
+import { Types } from 'mongoose';
+
 export enum AnimalType {
   MAMMALS = 'MAMMALS',
   BIRDS = 'BIRDS',
@@ -6,3 +8,7 @@ export enum AnimalType {
   FISH = 'FISH',
   INVERTEBRATES = 'INVERTEBRATES',
 }
+
+export type AddAnimalsListResponse = {
+  _id: Types.ObjectId;
+};

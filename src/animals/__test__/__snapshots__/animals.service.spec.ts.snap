@@ -14,6 +14,27 @@ exports[`AnimalsService create should throw error BadRequestException --> Animal
 
 exports[`AnimalsService create should throw error InternalServerErrorException when mongodb fails 1`] = `[InternalServerErrorException: Internal Server Error]`;
 
+exports[`AnimalsService addAnimals should return newly created animals 1`] = `
+[
+  {
+    "_id": "id1",
+    "animalName": "Elephant",
+    "createdAt": 2022-02-02T00:00:00.000Z,
+    "type": "MAMMALS",
+  },
+  {
+    "_id": "id2",
+    "animalName": "Lion",
+    "createdAt": 2022-02-02T00:00:00.000Z,
+    "type": "MAMMALS",
+  },
+]
+`;
+
+exports[`AnimalsService addAnimals should throw error BadRequestException --> Animal from the list already exist in db 1`] = `[BadRequestException: Animals already exist in database]`;
+
+exports[`AnimalsService addAnimals should throw error InternalServerErrorException when mongodb fails 1`] = `[InternalServerErrorException: Internal Server Error]`;
+
 exports[`AnimalsService findAll should find all animals 1`] = `
 [
   {

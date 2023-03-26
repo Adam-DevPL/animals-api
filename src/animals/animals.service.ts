@@ -88,4 +88,28 @@ export class AnimalsService {
       throw new InternalServerErrorException();
     }
   }
+
+  async addAnimals(animalsList: AnimalDto[]) {
+    try {
+      const allAnimals: AnimalWithId[] = await this.findAll();
+      const alreadyExistAnimals = animalsList.filter((animal) =>
+        allAnimals.some(
+          ({ animalName, type }) =>
+            animal.animalName === animalName && animal.type === type,
+        ),
+      );
+      if (alreadyExistAnimals.length !== 0) {
+        throw new BadRequestException('Animals already exist in database');
+      }
+      return await this.animalModel.insertMany(
+        animalsList.map((animal) => ({ createdAt: new Date(), ...animal })),
+      );
+    } catch (err) {
+      console.error(err);
+      if (err instanceof BadRequestException) {
+        throw new BadRequestException(err.message);
+      }
+      throw new InternalServerErrorException();
+    }
+  }
 }

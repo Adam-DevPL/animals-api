@@ -12,7 +12,7 @@ import {
 } from '@nestjs/swagger';
 import { ParamsWithId } from 'src/validations/id.validator';
 import { AnimalsService } from './animals.service';
-import { AnimalDto, UpdateAnimalDto } from './dto/animal.dto';
+import { AnimalDto, AnimalDtoArray, UpdateAnimalDto } from './dto/animal.dto';
 import { ErrorDto } from './dto/error.dto';
 import { AnimalWithId } from './schemas/animal.schema';
 
@@ -102,5 +102,24 @@ export class AnimalsController {
   })
   async createAnimal(@Body() animal: AnimalDto) {
     return this.animalsService.create(animal);
+  }
+
+  @Post('add/animals')
+  @ApiBody({ type: [AnimalDto] })
+  @ApiOperation({ summary: 'Add a list of animals' })
+  @ApiCreatedResponse({
+    description: 'The list of animals added successfully',
+    type: [AnimalWithId],
+  })
+  @ApiBadRequestResponse({
+    description: 'Incorrect  data or data already exist - BadRequest',
+    type: ErrorDto,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error',
+    type: ErrorDto,
+  })
+  async addAnimalsList(@Body() { animals }: AnimalDtoArray) {
+    return this.animalsService.addAnimals(animals);
   }
 }
