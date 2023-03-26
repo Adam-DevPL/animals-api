@@ -1,5 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AnimalsService create should return newly created animal 1`] = `
+{
+  "_id": "507f1f77bcf86cd799439011",
+  "animalName": "Dog",
+  "createdAt": 2022-02-02T00:00:00.000Z,
+  "description": "new dog created",
+  "type": "MAMMALS",
+}
+`;
+
+exports[`AnimalsService create should throw error BadRequestException --> Animal already exist in database 1`] = `[BadRequestException: Animal already exist in database]`;
+
+exports[`AnimalsService create should throw error InternalServerErrorException when mongodb fails 1`] = `[InternalServerErrorException: Internal Server Error]`;
+
 exports[`AnimalsService addAnimals should return newly created animals 1`] = `
 [
   {
@@ -36,6 +50,9 @@ exports[`AnimalsService findAll should throw Internal Exception Error when somet
 
 exports[`AnimalsService findOne should return one animal 1`] = `
 {
+  "_id": {
+    "_id": "507f1f77bcf86cd799439011",
+  },
   "animalName": "Human",
   "createdAt": 2023-03-19T18:27:12.933Z,
   "description": "test description",
@@ -43,4 +60,22 @@ exports[`AnimalsService findOne should return one animal 1`] = `
 }
 `;
 
+exports[`AnimalsService findOne should throw error InternalServerErrorException when mongodb fails 1`] = `[InternalServerErrorException: Internal Server Error]`;
+
 exports[`AnimalsService findOne should throw error NotFoundException --> Not Found, when animal does not exist 1`] = `[NotFoundException: Not Found]`;
+
+exports[`AnimalsService update should return updated animal 1`] = `
+{
+  "_id": {
+    "_id": "507f1f77bcf86cd799439011",
+  },
+  "animalName": "Cat",
+  "createdAt": 2023-03-19T18:27:12.933Z,
+  "description": "description after update",
+  "type": "BIRDS",
+}
+`;
+
+exports[`AnimalsService update should throw error InternalServerErrorException when mongodb fails 1`] = `[InternalServerErrorException: Internal Server Error]`;
+
+exports[`AnimalsService update should throw error NotFoundException --> Not Found, when animal does not exist 1`] = `[NotFoundException: Not Found]`;

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -12,7 +12,7 @@ import {
 } from '@nestjs/swagger';
 import { ParamsWithId } from 'src/validations/id.validator';
 import { AnimalsService } from './animals.service';
-import { AnimalDto, AnimalDtoArray } from './dto/animal.dto';
+import { AnimalDto, AnimalDtoArray, UpdateAnimalDto } from './dto/animal.dto';
 import { ErrorDto } from './dto/error.dto';
 import { AnimalWithId } from './schemas/animal.schema';
 
@@ -31,7 +31,7 @@ export class AnimalsController {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async getAllAnimals() {
+  async getAllAnimals(): Promise<AnimalWithId[]> {
     return this.animalsService.findAll();
   }
 
@@ -56,6 +56,52 @@ export class AnimalsController {
   })
   async getAnimal(@Param() { id }: ParamsWithId) {
     return this.animalsService.findOne(id);
+  }
+
+  @Patch('animal/:id')
+  @ApiParam({
+    name: 'id',
+    description: 'id from database',
+  })
+  @ApiBody({ type: UpdateAnimalDto })
+  @ApiOperation({ summary: 'Get an animal and will update' })
+  @ApiOkResponse({
+    description: 'The resources were returned successfully',
+    type: AnimalWithId,
+  })
+  @ApiBadRequestResponse({
+    description: 'Incorrect id number',
+    type: ErrorDto,
+  })
+  @ApiNotFoundResponse({ description: 'Animal not found', type: ErrorDto })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error',
+    type: ErrorDto,
+  })
+  async updateAnimal(
+    @Param() { id }: ParamsWithId,
+    @Body() animal: UpdateAnimalDto,
+  ) {
+    return this.animalsService.update(id, animal);
+  }
+
+  @Post('add')
+  @ApiBody({ type: AnimalDto })
+  @ApiOperation({ summary: 'Create a new animal' })
+  @ApiCreatedResponse({
+    description: 'The animal was created successfully',
+    type: AnimalWithId,
+  })
+  @ApiBadRequestResponse({
+    description: 'Incorrect  data or data already exist - BadRequest',
+    type: ErrorDto,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error',
+    type: ErrorDto,
+  })
+  async createAnimal(@Body() animal: AnimalDto) {
+    return this.animalsService.create(animal);
   }
 
   @Post('add/animals')
