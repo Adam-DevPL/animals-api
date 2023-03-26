@@ -10,9 +10,16 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { AnimalType } from 'src/types/animals.type';
 import { ParamsWithId } from 'src/validations/id.validator';
+import { AnimalTypeParam } from 'src/validations/type.validator';
 import { AnimalsService } from './animals.service';
-import { AnimalDto, AnimalDtoArray, UpdateAnimalDto } from './dto/animal.dto';
+import {
+  AnimalDto,
+  AnimalDtoArray,
+  UpdateAnimalDto,
+  AnimalNameArrayDto,
+} from './dto/animal.dto';
 import { ErrorDto } from './dto/error.dto';
 import { AnimalWithId } from './schemas/animal.schema';
 
@@ -121,5 +128,32 @@ export class AnimalsController {
   })
   async addAnimalsList(@Body() { animals }: AnimalDtoArray) {
     return this.animalsService.addAnimals(animals);
+  }
+
+  @Post('add/:type')
+  @ApiBody({ type: AnimalNameArrayDto })
+  @ApiParam({
+    name: 'type',
+    description: 'Gets the Animal type',
+    enum: AnimalType,
+  })
+  @ApiOperation({ summary: 'Add a list of animals of one type' })
+  @ApiCreatedResponse({
+    description: 'The list of animals added successfully',
+    type: [AnimalWithId],
+  })
+  @ApiBadRequestResponse({
+    description: 'Incorrect data or data already exist - BadRequest',
+    type: ErrorDto,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error',
+    type: ErrorDto,
+  })
+  async addAnimalsListWithType(
+    @Body() { animalsNames }: AnimalNameArrayDto,
+    @Param() type: AnimalTypeParam,
+  ) {
+    return this.animalsService.addAnimalsWithOneType(animalsNames, type);
   }
 }

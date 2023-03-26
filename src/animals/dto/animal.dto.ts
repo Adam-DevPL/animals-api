@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { AnimalType } from 'src/types/animals.type';
 
-export class AnimalDto {
+export class AnimalNameDto {
   @ApiProperty({
     description: 'Animal name, can not be empty',
     type: 'string',
@@ -20,7 +20,9 @@ export class AnimalDto {
   @IsString()
   @IsNotEmpty()
   animalName: string;
+}
 
+export class AnimalDto extends AnimalNameDto {
   @ApiProperty({
     description: `One of Animal types - see Enum`,
     enum: AnimalType,
@@ -77,4 +79,15 @@ export class AnimalDtoArray {
   @ValidateNested({ each: true })
   @Type(() => AnimalDto)
   animals: AnimalDto[];
+}
+
+export class AnimalNameArrayDto {
+  @ApiProperty({
+    description: 'Array with animals names only',
+    type: [AnimalNameDto],
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AnimalNameDto)
+  animalsNames: AnimalNameDto[];
 }
