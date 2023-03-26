@@ -56,7 +56,6 @@ describe('AnimalsService', () => {
             create: jest.fn().mockImplementation((animalData: AnimalDto) =>
               Promise.resolve({
                 _id: '507f1f77bcf86cd799439011',
-                createdAt: new Date('2023-03-19T18:27:12.933Z'),
                 ...animalData,
               }),
             ),
@@ -155,7 +154,10 @@ describe('AnimalsService', () => {
       const result = await service.create(animalDto);
 
       //then
-      expect(result).toMatchSnapshot();
+      expect({
+        ...result,
+        createdAt: new Date('2022-02-02'),
+      }).toMatchSnapshot();
     });
 
     it('should throw error BadRequestException --> Animal already exist in database', async () => {

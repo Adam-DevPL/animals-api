@@ -4,7 +4,7 @@ exports[`AnimalsService create should return newly created animal 1`] = `
 {
   "_id": "507f1f77bcf86cd799439011",
   "animalName": "Dog",
-  "createdAt": 2023-03-24T12:50:27.365Z,
+  "createdAt": 2022-02-02T00:00:00.000Z,
   "description": "new dog created",
   "type": "MAMMALS",
 }
