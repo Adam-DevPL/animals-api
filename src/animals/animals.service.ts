@@ -45,21 +45,17 @@ export class AnimalsService {
   async addAnimals(animalsList: AnimalDto[]) {
     try {
       const allAnimals: AnimalWithId[] = await this.findAll();
-      console.log(allAnimals);
-      const uniqueAnimals = animalsList.filter((animal) =>
-        allAnimals.every(
+      const alreadyExistAnimals = animalsList.filter((animal) =>
+        allAnimals.some(
           ({ animalName, type }) =>
-            animal.animalName !== animalName && animal.type !== type,
+            animal.animalName === animalName && animal.type === type,
         ),
       );
-      console.log(uniqueAnimals);
-      if (uniqueAnimals.length === 0) {
-        throw new BadRequestException(
-          'No animals has been sent or animals already exist in database',
-        );
+      if (alreadyExistAnimals.length !== 0) {
+        throw new BadRequestException('Animals already exist in database');
       }
       return await this.animalModel.insertMany(
-        uniqueAnimals.map((animal) => ({ createdAt: new Date(), ...animal })),
+        animalsList.map((animal) => ({ createdAt: new Date(), ...animal })),
       );
     } catch (err) {
       console.error(err);
