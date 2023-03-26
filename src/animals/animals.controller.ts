@@ -1,6 +1,8 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBody,
+  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -8,8 +10,11 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { AnimalType } from 'src/types/animals.type';
 import { ParamsWithId } from 'src/validations/id.validator';
+import { AnimalTypeParam } from 'src/validations/type.validator';
 import { AnimalsService } from './animals.service';
+import { AnimalNameArrayDto } from './dto/animal.dto';
 import { ErrorDto } from './dto/error.dto';
 import { AnimalWithId } from './schemas/animal.schema';
 
@@ -18,7 +23,7 @@ import { AnimalWithId } from './schemas/animal.schema';
 export class AnimalsController {
   constructor(private readonly animalsService: AnimalsService) {}
 
-  @Get('/all')
+  @Get('/')
   @ApiOperation({ summary: 'Get all animals from the api' })
   @ApiOkResponse({
     description: 'Get all data',
@@ -53,5 +58,32 @@ export class AnimalsController {
   })
   async getAnimal(@Param() { id }: ParamsWithId) {
     return this.animalsService.findOne(id);
+  }
+
+  @Post('add/:type')
+  @ApiBody({ type: AnimalNameArrayDto })
+  @ApiParam({
+    name: 'type',
+    description: 'Gets the Animal type',
+    enum: AnimalType,
+  })
+  @ApiOperation({ summary: 'Add a list of animals of one type' })
+  @ApiCreatedResponse({
+    description: 'The list of animals added successfully',
+    type: [AnimalWithId],
+  })
+  @ApiBadRequestResponse({
+    description: 'Incorrect data or data already exist - BadRequest',
+    type: ErrorDto,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error',
+    type: ErrorDto,
+  })
+  async addAnimalsList(
+    @Body() { animalsNames }: AnimalNameArrayDto,
+    @Param() type: AnimalTypeParam,
+  ) {
+    return this.animalsService.addAnimalsWithOneType(animalsNames, type);
   }
 }

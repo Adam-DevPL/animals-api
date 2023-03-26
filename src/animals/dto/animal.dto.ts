@@ -1,8 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsEnum, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsNotEmpty,
+  IsEnum,
+  IsOptional,
+  IsArray,
+  ValidateNested,
+} from 'class-validator';
 import { AnimalType } from 'src/types/animals.type';
 
-export class AnimalDto {
+export class AnimalNameDto {
   @ApiProperty({
     description: 'Animal name, can not be empty',
     type: 'string',
@@ -11,7 +19,9 @@ export class AnimalDto {
   @IsString()
   @IsNotEmpty()
   animalName: string;
+}
 
+export class AnimalDto extends AnimalNameDto {
   @ApiProperty({
     description: `One of Animal types - see Enum`,
     enum: AnimalType,
@@ -30,4 +40,15 @@ export class AnimalDto {
   @IsOptional()
   @IsString()
   description?: string;
+}
+
+export class AnimalNameArrayDto {
+  @ApiProperty({
+    description: 'Array with animals names only',
+    type: [AnimalNameDto],
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AnimalNameDto)
+  animalsNames: AnimalNameDto[];
 }
