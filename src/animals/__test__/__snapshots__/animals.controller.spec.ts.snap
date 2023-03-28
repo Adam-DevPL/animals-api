@@ -1,18 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AnimalsController createAnimal should create an animal 1`] = `
-{
-  "_id": "507f1f77bcf86cd799439011",
-  "animalName": "Dog",
-  "createdAt": 2023-03-19T18:27:12.933Z,
-  "description": "new dog created",
-  "type": "MAMMALS",
-}
+exports[`AnimalsController addAnimalsListWithType should add list of animals with one type 1`] = `
+[
+  {
+    "_id": "id1",
+    "animalName": "Cat",
+    "createdAt": "2022-02-02",
+    "type": "MAMMALS",
+  },
+  {
+    "_id": "id2",
+    "animalName": "Dog",
+    "createdAt": "2022-02-02",
+    "type": "MAMMALS",
+  },
+]
 `;
 
-exports[`AnimalsController createAnimal should throw Interal Servel Error Exception when something goes worng with mongodb connection 1`] = `[InternalServerErrorException: Internal Server Error]`;
+exports[`AnimalsController addAnimalsListWithType should throw Interal Servel Error Exception when something goes worng with mongodb connection 1`] = `[InternalServerErrorException: Internal Server Error]`;
 
-exports[`AnimalsController createAnimal should throw error - BadRequestException - when animal already exist 1`] = `[BadRequestException: Animal already exist in database]`;
+exports[`AnimalsController addAnimalsListWithType should throw error - BadRequestException - when one of animals already exist 1`] = `[BadRequestException: Animals already exist in database]`;
 
 exports[`AnimalsController addAnimalsLsit should add list of animals 1`] = `
 [
@@ -35,30 +42,24 @@ exports[`AnimalsController addAnimalsLsit should throw Interal Servel Error Exce
 
 exports[`AnimalsController addAnimalsLsit should throw error - BadRequestException - when one of animals already exist 1`] = `[BadRequestException: Animals already exist in database]`;
 
-exports[`AnimalsController addAnimalsListWithType should add list of animals with one type 1`] = `
-[
-  {
-    "_id": "id1",
-    "animalName": "Cat",
-    "createdAt": "2022-02-02",
-    "type": "MAMMALS",
-  },
-  {
-    "_id": "id2",
-    "animalName": "Dog",
-    "createdAt": "2022-02-02",
-    "type": "MAMMALS",
-  },
-]
+exports[`AnimalsController createAnimal should create an animal 1`] = `
+{
+  "_id": "507f1f77bcf86cd799439011",
+  "animalName": "Dog",
+  "createdAt": 2023-03-19T18:27:12.933Z,
+  "description": "new dog created",
+  "type": "MAMMALS",
+}
 `;
 
-exports[`AnimalsController addAnimalsListWithType should throw Interal Servel Error Exception when something goes worng with mongodb connection 1`] = `[InternalServerErrorException: Internal Server Error]`;
+exports[`AnimalsController createAnimal should throw Interal Servel Error Exception when something goes worng with mongodb connection 1`] = `[InternalServerErrorException: Internal Server Error]`;
 
-exports[`AnimalsController addAnimalsListWithType should throw error - BadRequestException - when one of animals already exist 1`] = `[BadRequestException: Animals already exist in database]`;
+exports[`AnimalsController createAnimal should throw error - BadRequestException - when animal already exist 1`] = `[BadRequestException: Animal already exist in database]`;
 
 exports[`AnimalsController getAllAnimals should return an array of animals 1`] = `
 [
   {
+    "_id": "507f1f77bcf86cd799439011",
     "animalName": "Human",
     "createdAt": 2023-03-19T18:27:12.933Z,
     "description": "test description",
