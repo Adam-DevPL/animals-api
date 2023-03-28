@@ -22,6 +22,7 @@ services:
       - mongo-database
       - mongo-express
       - redis
+      - redis-commander
     volumes:
       - .:/usr/src/app
     restart: unless-stopped

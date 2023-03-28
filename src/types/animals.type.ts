@@ -12,3 +12,11 @@ export enum AnimalType {
 export type AddAnimalsListResponse = {
   _id: Types.ObjectId;
 };
+
+export interface AnimalResponse {
+  _id: string;
+  animalName: string;
+  type: AnimalType;
+  description?: string;
+  createdAt: Date;
+}

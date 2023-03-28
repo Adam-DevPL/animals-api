@@ -3,8 +3,9 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
+import { Types } from 'mongoose';
 import { AnimalType } from 'src/types/animals.type';
-import { ParamsWithId } from 'src/validations/id.validator';
+import { AnimalIdParam } from 'src/validations/id.validator';
 import { AnimalTypeParam } from 'src/validations/type.validator';
 import { AnimalsController } from '../animals.controller';
 import { AnimalsService } from '../animals.service';
@@ -18,6 +19,7 @@ import {
 import { Animal } from '../schemas/animal.schema';
 
 const animalStub: Animal = {
+  _id: new Types.ObjectId('507f1f77bcf86cd799439011'),
   animalName: 'Human',
   type: AnimalType.MAMMALS,
   createdAt: new Date('2023-03-19T18:27:12.933Z'),
@@ -152,7 +154,7 @@ describe('AnimalsController', () => {
   describe('getAnimal', () => {
     it('should return an animal', async () => {
       // given
-      const id: ParamsWithId = { id: '507f1f77bcf86cd799439011' }; // example of id, correct with mongodb policy
+      const id: AnimalIdParam = { id: '507f1f77bcf86cd799439011' }; // example of id, correct with mongodb policy
 
       //when
       const result = await animalsController.getAnimal(id);
@@ -192,7 +194,7 @@ describe('AnimalsController', () => {
     it('should throw error when id is not mongodb id', async () => {
       //given
       const incorrectId = { id: 123 };
-      const myObject = plainToInstance(ParamsWithId, incorrectId);
+      const myObject = plainToInstance(AnimalIdParam, incorrectId);
 
       //when
       const errors = await validate(myObject);
@@ -206,7 +208,7 @@ describe('AnimalsController', () => {
   describe('updateAnimal', () => {
     it('should update an animal', async () => {
       // given
-      const id: ParamsWithId = { id: '507f1f77bcf86cd799439011' }; // example of id, correct with mongodb policy
+      const id: AnimalIdParam = { id: '507f1f77bcf86cd799439011' }; // example of id, correct with mongodb policy
 
       //when
       const result = await animalsController.updateAnimal(id, animalUpdate);
@@ -238,7 +240,7 @@ describe('AnimalsController', () => {
     it('should throw error when id is not mongodb id - BadRequestException', async () => {
       //given
       const incorrectId = { id: 123 };
-      const myObject = plainToInstance(ParamsWithId, incorrectId);
+      const myObject = plainToInstance(AnimalIdParam, incorrectId);
 
       //when
       const errors = await validate(myObject);

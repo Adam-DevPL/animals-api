@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  CacheKey,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -11,7 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AnimalType } from 'src/types/animals.type';
-import { ParamsWithId } from 'src/validations/id.validator';
+import { AnimalIdParam } from 'src/validations/id.validator';
 import { AnimalTypeParam } from 'src/validations/type.validator';
 import { AnimalsService } from './animals.service';
 import {
@@ -21,27 +29,29 @@ import {
   AnimalNameArrayDto,
 } from './dto/animal.dto';
 import { ErrorDto } from './dto/error.dto';
-import { AnimalWithId } from './schemas/animal.schema';
+import { Animal } from './schemas/animal.schema';
 
 @ApiTags('animals')
 @Controller('animals')
 export class AnimalsController {
   constructor(private readonly animalsService: AnimalsService) {}
 
-  @Get('/')
+  @CacheKey('findAll')
+  @Get('/all')
   @ApiOperation({ summary: 'Get all animals from the api' })
   @ApiOkResponse({
     description: 'Get all data',
-    type: [AnimalWithId],
+    type: [Animal],
   })
   @ApiInternalServerErrorResponse({
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async getAllAnimals(): Promise<AnimalWithId[]> {
+  async getAllAnimals(): Promise<Animal[]> {
     return this.animalsService.findAll();
   }
 
+  @CacheKey('findOne')
   @Get('animal/:id')
   @ApiParam({
     name: 'id',
@@ -50,7 +60,7 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Get an animal with a given id' })
   @ApiOkResponse({
     description: 'The resources were returned successfully',
-    type: AnimalWithId,
+    type: Animal,
   })
   @ApiBadRequestResponse({
     description: 'Incorrect id number',
@@ -61,7 +71,7 @@ export class AnimalsController {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async getAnimal(@Param() { id }: ParamsWithId) {
+  async getAnimal(@Param() { id }: AnimalIdParam): Promise<Animal> {
     return this.animalsService.findOne(id);
   }
 
@@ -74,7 +84,7 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Get an animal and will update' })
   @ApiOkResponse({
     description: 'The resources were returned successfully',
-    type: AnimalWithId,
+    type: Animal,
   })
   @ApiBadRequestResponse({
     description: 'Incorrect id number',
@@ -86,9 +96,9 @@ export class AnimalsController {
     type: ErrorDto,
   })
   async updateAnimal(
-    @Param() { id }: ParamsWithId,
+    @Param() { id }: AnimalIdParam,
     @Body() animal: UpdateAnimalDto,
-  ) {
+  ): Promise<Animal> {
     return this.animalsService.update(id, animal);
   }
 
@@ -97,7 +107,7 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Create a new animal' })
   @ApiCreatedResponse({
     description: 'The animal was created successfully',
-    type: AnimalWithId,
+    type: Animal,
   })
   @ApiBadRequestResponse({
     description: 'Incorrect  data or data already exist - BadRequest',
@@ -107,7 +117,7 @@ export class AnimalsController {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async createAnimal(@Body() animal: AnimalDto) {
+  async createAnimal(@Body() animal: AnimalDto): Promise<Animal> {
     return this.animalsService.create(animal);
   }
 
@@ -116,7 +126,7 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Add a list of animals' })
   @ApiCreatedResponse({
     description: 'The list of animals added successfully',
-    type: [AnimalWithId],
+    type: [Animal],
   })
   @ApiBadRequestResponse({
     description: 'Incorrect  data or data already exist - BadRequest',
@@ -126,7 +136,7 @@ export class AnimalsController {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async addAnimalsList(@Body() { animals }: AnimalDtoArray) {
+  async addAnimalsList(@Body() { animals }: AnimalDtoArray): Promise<Animal[]> {
     return this.animalsService.addAnimals(animals);
   }
 
@@ -140,7 +150,7 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Add a list of animals of one type' })
   @ApiCreatedResponse({
     description: 'The list of animals added successfully',
-    type: [AnimalWithId],
+    type: [Animal],
   })
   @ApiBadRequestResponse({
     description: 'Incorrect data or data already exist - BadRequest',
@@ -153,7 +163,7 @@ export class AnimalsController {
   async addAnimalsListWithType(
     @Body() { animalsNames }: AnimalNameArrayDto,
     @Param() type: AnimalTypeParam,
-  ) {
+  ): Promise<Animal[]> {
     return this.animalsService.addAnimalsWithOneType(animalsNames, type);
   }
 }

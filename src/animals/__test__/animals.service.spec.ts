@@ -1,21 +1,27 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  CACHE_MANAGER,
+  NotFoundException,
+} from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Error, Model } from 'mongoose';
+import { Error, Model, Types } from 'mongoose';
+import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
 import { AnimalType } from 'src/types/animals.type';
 import { AnimalTypeParam } from 'src/validations/type.validator';
 import { AnimalsService } from '../animals.service';
 import { AnimalDto, AnimalNameDto, UpdateAnimalDto } from '../dto/animal.dto';
-import { Animal, AnimalDocument, AnimalWithId } from '../schemas/animal.schema';
+import { Animal, AnimalDocument } from '../schemas/animal.schema';
 
 const animalStub: Animal = {
+  _id: new Types.ObjectId('507f1f77bcf86cd799439011'),
   animalName: 'Human',
   type: AnimalType.MAMMALS,
   createdAt: new Date('2023-03-19T18:27:12.933Z'),
   description: 'test description',
 };
 
-const animalUpdate: UpdateAnimalDto = {
+const animalUpdateDto: UpdateAnimalDto = {
   animalName: 'Cat',
   type: AnimalType.BIRDS,
   description: 'description after update',
@@ -50,11 +56,19 @@ const animalsNamesList: AnimalNameDto[] = [
 describe('AnimalsService', () => {
   let service: AnimalsService;
   let model: Model<AnimalDocument>;
+  let redisCache: RedisCacheService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        RedisCacheService,
         AnimalsService,
+        {
+          provide: CACHE_MANAGER,
+          useValue: {
+            del: () => 'any value',
+          },
+        },
         {
           provide: getModelToken(Animal.name),
           useValue: {
@@ -99,6 +113,7 @@ describe('AnimalsService', () => {
 
     service = module.get<AnimalsService>(AnimalsService);
     model = module.get<Model<AnimalDocument>>(getModelToken(Animal.name));
+    redisCache = module.get<RedisCacheService>(RedisCacheService);
     jest.clearAllMocks();
   });
 
@@ -154,7 +169,7 @@ describe('AnimalsService', () => {
   describe('update', () => {
     it('should return updated animal', async () => {
       const id = '507f1f77bcf86cd799439011';
-      const result = await service.update(id, animalUpdate);
+      const result = await service.update(id, animalUpdateDto);
       expect(result).toMatchSnapshot();
     });
 
@@ -165,7 +180,7 @@ describe('AnimalsService', () => {
 
       //then
       await expect(
-        service.update('507f1f77bcf86cd799439099', animalUpdate),
+        service.update('507f1f77bcf86cd799439099', animalUpdateDto),
       ).rejects.toMatchSnapshot();
     });
 
@@ -176,7 +191,7 @@ describe('AnimalsService', () => {
 
       //then
       await expect(
-        service.update('507f1f77bcf86cd799439099', animalUpdate),
+        service.update('507f1f77bcf86cd799439099', animalUpdateDto),
       ).rejects.toMatchSnapshot();
     });
   });
