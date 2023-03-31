@@ -27,6 +27,7 @@ import {
   AnimalDtoArray,
   UpdateAnimalDto,
   AnimalNameArrayDto,
+  AnimalDtoResponse,
 } from './dto/animal.dto';
 import { ErrorDto } from './dto/error.dto';
 import { Animal } from './schemas/animal.schema';
@@ -41,13 +42,13 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Get all animals from the api' })
   @ApiOkResponse({
     description: 'Get all data',
-    type: [Animal],
+    type: [AnimalDtoResponse],
   })
   @ApiInternalServerErrorResponse({
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async getAllAnimals(): Promise<Animal[]> {
+  async getAllAnimals(): Promise<AnimalDtoResponse[]> {
     return this.animalsService.findAll();
   }
 
@@ -60,7 +61,7 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Get an animal with a given id' })
   @ApiOkResponse({
     description: 'The resources were returned successfully',
-    type: Animal,
+    type: AnimalDtoResponse,
   })
   @ApiBadRequestResponse({
     description: 'Incorrect id number',
@@ -71,7 +72,7 @@ export class AnimalsController {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async getAnimal(@Param() { id }: AnimalIdParam): Promise<Animal> {
+  async getAnimal(@Param() { id }: AnimalIdParam): Promise<AnimalDtoResponse> {
     return this.animalsService.findOne(id);
   }
 
@@ -84,7 +85,7 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Get an animal and will update' })
   @ApiOkResponse({
     description: 'The resources were returned successfully',
-    type: Animal,
+    type: AnimalDtoResponse,
   })
   @ApiBadRequestResponse({
     description: 'Incorrect id number',
@@ -98,7 +99,7 @@ export class AnimalsController {
   async updateAnimal(
     @Param() { id }: AnimalIdParam,
     @Body() animal: UpdateAnimalDto,
-  ): Promise<Animal> {
+  ): Promise<AnimalDtoResponse> {
     return this.animalsService.update(id, animal);
   }
 
@@ -107,7 +108,7 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Create a new animal' })
   @ApiCreatedResponse({
     description: 'The animal was created successfully',
-    type: Animal,
+    type: AnimalDtoResponse,
   })
   @ApiBadRequestResponse({
     description: 'Incorrect  data or data already exist - BadRequest',
@@ -117,7 +118,7 @@ export class AnimalsController {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async createAnimal(@Body() animal: AnimalDto): Promise<Animal> {
+  async createAnimal(@Body() animal: AnimalDto): Promise<AnimalDtoResponse> {
     return this.animalsService.create(animal);
   }
 
@@ -126,7 +127,7 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Add a list of animals' })
   @ApiCreatedResponse({
     description: 'The list of animals added successfully',
-    type: [Animal],
+    type: [AnimalDtoResponse],
   })
   @ApiBadRequestResponse({
     description: 'Incorrect  data or data already exist - BadRequest',
@@ -136,7 +137,9 @@ export class AnimalsController {
     description: 'Internal server error',
     type: ErrorDto,
   })
-  async addAnimalsList(@Body() { animals }: AnimalDtoArray): Promise<Animal[]> {
+  async addAnimalsList(
+    @Body() { animals }: AnimalDtoArray,
+  ): Promise<AnimalDtoResponse[]> {
     return this.animalsService.addAnimals(animals);
   }
 
@@ -150,7 +153,7 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Add a list of animals of one type' })
   @ApiCreatedResponse({
     description: 'The list of animals added successfully',
-    type: [Animal],
+    type: [AnimalDtoResponse],
   })
   @ApiBadRequestResponse({
     description: 'Incorrect data or data already exist - BadRequest',
@@ -163,7 +166,7 @@ export class AnimalsController {
   async addAnimalsListWithType(
     @Body() { animalsNames }: AnimalNameArrayDto,
     @Param() type: AnimalTypeParam,
-  ): Promise<Animal[]> {
+  ): Promise<AnimalDtoResponse[]> {
     return this.animalsService.addAnimalsWithOneType(animalsNames, type);
   }
 }

@@ -80,16 +80,18 @@ describe('AnimalsController', () => {
               .fn()
               .mockImplementation((id: string, animalData: UpdateAnimalDto) =>
                 Promise.resolve({
-                  _id: id,
-                  createdAt: new Date('2023-03-19T18:27:12.933Z'),
+                  id: id,
+                  createdAt: '2023-03-19',
                   ...animalData,
+                  name: animalData.animalName,
                 }),
               ),
             create: jest.fn().mockImplementation((animalData: AnimalDto) =>
               Promise.resolve({
                 _id: '507f1f77bcf86cd799439011',
-                createdAt: new Date('2023-03-19T18:27:12.933Z'),
+                createdAt: '2023-03-19',
                 ...animalData,
+                name: animalData.animalName,
               }),
             ),
             addAnimals: jest.fn().mockImplementation((animals) =>
@@ -212,9 +214,10 @@ describe('AnimalsController', () => {
 
       //when
       const result = await animalsController.updateAnimal(id, animalUpdate);
+      console.log(result);
 
       //then
-      expect(result.animalName).toEqual(animalUpdate.animalName);
+      expect(result.name).toEqual(animalUpdate.animalName);
       expect(result.type).toEqual(animalUpdate.type);
       expect(result.description).toEqual(animalUpdate.description);
       expect(result).toMatchSnapshot();
@@ -289,7 +292,7 @@ describe('AnimalsController', () => {
       const result = await animalsController.createAnimal(animalDto);
 
       //then
-      expect(result.animalName).toEqual(animalDto.animalName);
+      expect(result.name).toEqual(animalDto.animalName);
       expect(result.type).toEqual(animalDto.type);
       expect(result.description).toEqual(animalDto.description);
       expect(result).toMatchSnapshot();

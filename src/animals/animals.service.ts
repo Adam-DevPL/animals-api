@@ -8,7 +8,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
 import { AnimalTypeParam } from 'src/validations/type.validator';
-import { AnimalDto, UpdateAnimalDto, AnimalNameDto } from './dto/animal.dto';
+import {
+  AnimalDto,
+  UpdateAnimalDto,
+  AnimalNameDto,
+  AnimalDtoResponse,
+} from './dto/animal.dto';
 import { Animal, AnimalDocument } from './schemas/animal.schema';
 
 @Injectable()
@@ -18,16 +23,17 @@ export class AnimalsService {
     private readonly redisCacheManager: RedisCacheService,
   ) {}
 
-  async findAll(): Promise<Animal[]> {
+  async findAll(): Promise<AnimalDtoResponse[]> {
     try {
-      return await this.animalModel.find();
+      const animals: Animal[] = await this.animalModel.find();
+      return AnimalDtoResponse.mapperArrayDto(animals);
     } catch (err) {
-      // console.error(err);
+      console.error(err);
       throw new InternalServerErrorException();
     }
   }
 
-  async findOne(id: string): Promise<Animal> {
+  async findOne(id: string): Promise<AnimalDtoResponse> {
     try {
       const animal: AnimalDocument = await this.animalModel.findById({
         _id: new Types.ObjectId(id),
@@ -36,9 +42,9 @@ export class AnimalsService {
       if (!animal) {
         throw new NotFoundException();
       }
-      return animal;
+      return AnimalDtoResponse.mapperDto(animal);
     } catch (err) {
-      // console.error(err);
+      console.error(err);
       if (err instanceof NotFoundException) {
         throw new NotFoundException();
       }
@@ -46,7 +52,10 @@ export class AnimalsService {
     }
   }
 
-  async update(id: string, animalData: UpdateAnimalDto): Promise<Animal> {
+  async update(
+    id: string,
+    animalData: UpdateAnimalDto,
+  ): Promise<AnimalDtoResponse> {
     try {
       const animal: AnimalDocument = await this.animalModel.findByIdAndUpdate(
         { _id: new Types.ObjectId(id) },
@@ -61,7 +70,7 @@ export class AnimalsService {
       }
 
       await this.redisCacheManager.clearCache();
-      return animal;
+      return AnimalDtoResponse.mapperDto(animal);
     } catch (err) {
       console.error(err);
       if (err instanceof NotFoundException) {
@@ -71,7 +80,7 @@ export class AnimalsService {
     }
   }
 
-  async create(animalData: AnimalDto): Promise<Animal> {
+  async create(animalData: AnimalDto): Promise<AnimalDtoResponse> {
     try {
       const animal: AnimalDocument = await this.animalModel.findOne({
         animalName: { $eq: animalData.animalName },
@@ -89,9 +98,9 @@ export class AnimalsService {
 
       await this.redisCacheManager.clearCache();
 
-      return newAnimal;
+      return AnimalDtoResponse.mapperDto(newAnimal);
     } catch (err) {
-      // console.error(err);
+      console.error(err);
       if (err instanceof BadRequestException) {
         throw new BadRequestException(err.message);
       }
@@ -99,13 +108,13 @@ export class AnimalsService {
     }
   }
 
-  async addAnimals(animalsList: AnimalDto[]): Promise<Animal[]> {
+  async addAnimals(animalsList: AnimalDto[]): Promise<AnimalDtoResponse[]> {
     try {
-      const allAnimals: Animal[] = await this.findAll();
+      const allAnimals: AnimalDtoResponse[] = await this.findAll();
       const alreadyExistAnimals: AnimalDto[] = animalsList.filter((animal) =>
         allAnimals.some(
-          ({ animalName, type }) =>
-            animal.animalName === animalName && animal.type === type,
+          ({ name, type }) =>
+            animal.animalName === name && animal.type === type,
         ),
       );
       if (alreadyExistAnimals.length !== 0) {
@@ -114,11 +123,13 @@ export class AnimalsService {
 
       await this.redisCacheManager.clearCache();
 
-      return await this.animalModel.insertMany(
+      const animals: Animal[] = await this.animalModel.insertMany(
         animalsList.map((animal) => ({ createdAt: new Date(), ...animal })),
       );
+
+      return AnimalDtoResponse.mapperArrayDto(animals);
     } catch (err) {
-      // console.error(err);
+      console.error(err);
       if (err instanceof BadRequestException) {
         throw new BadRequestException(err.message);
       }
@@ -128,14 +139,14 @@ export class AnimalsService {
   async addAnimalsWithOneType(
     animalsNames: AnimalNameDto[],
     typeAnimal: AnimalTypeParam,
-  ): Promise<Animal[]> {
+  ): Promise<AnimalDtoResponse[]> {
     try {
-      const allAnimals: Animal[] = await this.findAll();
+      const allAnimals: AnimalDtoResponse[] = await this.findAll();
       const alreadyExistAnimals: AnimalNameDto[] = animalsNames.filter(
         (animal) =>
           allAnimals.some(
-            ({ animalName, type }) =>
-              animal.animalName === animalName && typeAnimal.type === type,
+            ({ name, type }) =>
+              animal.animalName === name && typeAnimal.type === type,
           ),
       );
       if (alreadyExistAnimals.length !== 0) {
@@ -144,15 +155,17 @@ export class AnimalsService {
 
       await this.redisCacheManager.clearCache();
 
-      return await this.animalModel.insertMany(
+      const animals: Animal[] = await this.animalModel.insertMany(
         animalsNames.map((animal) => ({
           createdAt: new Date(),
           animalName: animal.animalName,
           type: typeAnimal.type,
         })),
       );
+
+      return AnimalDtoResponse.mapperArrayDto(animals);
     } catch (err) {
-      // console.error(err);
+      console.error(err);
       if (err instanceof BadRequestException) {
         throw new BadRequestException(err.message);
       }
