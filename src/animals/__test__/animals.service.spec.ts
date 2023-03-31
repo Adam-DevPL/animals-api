@@ -231,7 +231,7 @@ describe('AnimalsService', () => {
       //when
       const result = (await await service.addAnimals(animalsList)).map(
         (res) => ({
-          createdAt: (res.createdAt = new Date('2022-02-02')),
+          createdAt: (res.createdAt = '2022-02-02'),
           ...res,
         }),
       );
@@ -280,7 +280,7 @@ describe('AnimalsService', () => {
       const result = (
         await service.addAnimalsWithOneType(animalsNamesList, type)
       ).map((res) => ({
-        createdAt: (res.createdAt = new Date('2022-02-02')),
+        createdAt: (res.createdAt = '2022-02-02'),
         ...res,
       }));
 
