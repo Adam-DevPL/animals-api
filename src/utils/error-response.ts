@@ -11,6 +11,6 @@ export const getStatusAndErrorMsg = <T>(exception: T): ErrorDto => {
 
   return {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
-    message: 'Internal server error',
+    message: 'Unexpected error. Sorry for a trouble',
   };
 };

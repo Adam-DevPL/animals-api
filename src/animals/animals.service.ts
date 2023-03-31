@@ -40,13 +40,14 @@ export class AnimalsService {
       });
 
       if (!animal) {
-        throw new NotFoundException();
+        throw new NotFoundException('Animal was not found in database');
       }
+
       return AnimalDtoResponse.mapperDto(animal);
     } catch (err) {
       console.error(err);
       if (err instanceof NotFoundException) {
-        throw new NotFoundException();
+        throw new NotFoundException(err.message);
       }
       throw new InternalServerErrorException();
     }
@@ -66,15 +67,16 @@ export class AnimalsService {
       );
 
       if (!animal) {
-        throw new NotFoundException();
+        throw new NotFoundException('Animal with given id does not exist');
       }
 
-      await this.redisCacheManager.clearCache();
+      await this.redisCacheManager.clearCache(animal._id.toString());
+
       return AnimalDtoResponse.mapperDto(animal);
     } catch (err) {
       console.error(err);
       if (err instanceof NotFoundException) {
-        throw new NotFoundException();
+        throw new NotFoundException(err.message);
       }
       throw new InternalServerErrorException();
     }

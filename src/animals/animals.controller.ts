@@ -30,7 +30,6 @@ import {
   AnimalDtoResponse,
 } from './dto/animal.dto';
 import { ErrorDto } from './dto/error.dto';
-import { Animal } from './schemas/animal.schema';
 
 @ApiTags('animals')
 @Controller('animals')
@@ -52,7 +51,6 @@ export class AnimalsController {
     return this.animalsService.findAll();
   }
 
-  @CacheKey('findOne')
   @Get('animal/:id')
   @ApiParam({
     name: 'id',
