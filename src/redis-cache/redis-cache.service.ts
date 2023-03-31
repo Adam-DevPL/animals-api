@@ -5,8 +5,10 @@ import { Cache } from 'cache-manager';
 export class RedisCacheService {
   constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache) {}
 
-  async clearCache() {
+  async clearCache(id?: string) {
     this.cacheManager.del('findAll');
-    this.cacheManager.del('findOne');
+    if (id) {
+      this.cacheManager.del(`/animals/animal/${id}`);
+    }
   }
 }
