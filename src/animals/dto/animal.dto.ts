@@ -9,7 +9,9 @@ import {
   IsArray,
   ValidateNested,
 } from 'class-validator';
+import { Types } from 'mongoose';
 import { AnimalType } from 'src/types/animals.type';
+import { Animal } from '../schemas/animal.schema';
 
 export class AnimalNameDto {
   @ApiProperty({
@@ -45,36 +47,6 @@ export class AnimalDto extends AnimalNameDto {
 
 export class UpdateAnimalDto extends PartialType(AnimalDto) {}
 
-// export class UpdateAnimalDto {
-//   @ApiPropertyOptional({
-//     description: 'Animal name',
-//     type: 'string',
-//     example: 'Cat',
-//   })
-//   @IsOptional()
-//   @IsString()
-//   animalName?: string;
-
-//   @ApiPropertyOptional({
-//     description: `One of Animal types - see Enum`,
-//     enum: AnimalType,
-//     type: 'AnimalType',
-//     example: AnimalType.MAMMALS,
-//   })
-//   @Optional()
-//   @IsEnum(AnimalType)
-//   type?: AnimalType;
-
-//   @ApiPropertyOptional({
-//     description: 'Optional description',
-//     type: 'string',
-//     example: 'test description',
-//   })
-//   @IsOptional()
-//   @IsString()
-//   description?: string;
-// }
-
 export class AnimalDtoArray {
   @ApiProperty({ description: 'Array with animals', type: [AnimalDto] })
   @IsArray()
@@ -92,4 +64,42 @@ export class AnimalNameArrayDto {
   @ValidateNested({ each: true })
   @Type(() => AnimalNameDto)
   animalsNames: AnimalNameDto[];
+}
+
+export class AnimalDtoResponse {
+  id: string;
+  name: string;
+  type: AnimalType;
+  createdAt: string;
+  description?: string;
+
+  constructor(
+    id: Types.ObjectId,
+    name: string,
+    type: AnimalType,
+    createdAt: Date,
+    description?: string,
+  ) {
+    this.id = id.toString();
+    this.name = this.name = name;
+    this.type = type;
+    this.createdAt = createdAt.toUTCString();
+    this.description = description;
+  }
+
+  static mapperDto(data: Animal): AnimalDtoResponse {
+    return new AnimalDtoResponse(
+      data._id,
+      data.animalName,
+      data.type,
+      data.createdAt,
+      data.description,
+    );
+  }
+
+  static mapperArrayDto(data: Animal[]): AnimalDtoResponse[] {
+    return data.map((element) => {
+      return this.mapperDto(element);
+    });
+  }
 }
