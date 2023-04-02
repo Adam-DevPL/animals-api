@@ -123,27 +123,37 @@ describe('AnimalsService', () => {
 
   describe('findAll', () => {
     it('should find all animals', async () => {
+      //when
       const result = await service.findAll();
+      //then
       expect(result).toMatchSnapshot();
     });
 
     it('should throw Internal Exception Error when something goes wrong with mongodb connection', async () => {
+      //when
       jest.spyOn(model, 'find').mockImplementation(() => {
         throw new Error('mongodb down');
       });
 
+      //then
       expect(service.findAll).rejects.toMatchSnapshot();
     });
   });
 
   describe('findOne', () => {
     it('should return one animal', async () => {
+      //given
       const id = '507f1f77bcf86cd799439011';
+
+      //when
       const result = await service.findOne(id);
+
+      //then
       expect(result).toMatchSnapshot();
     });
 
     it('should throw error NotFoundException --> Not Found, when animal does not exist', async () => {
+      //when
       jest.spyOn(model, 'findById').mockImplementation(() => {
         throw new NotFoundException();
       });
@@ -155,6 +165,7 @@ describe('AnimalsService', () => {
     });
 
     it('should throw error InternalServerErrorException when mongodb fails', async () => {
+      //when
       jest.spyOn(model, 'findById').mockImplementation(() => {
         throw new Error('mongo fails');
       });
@@ -168,12 +179,18 @@ describe('AnimalsService', () => {
 
   describe('update', () => {
     it('should return updated animal', async () => {
+      //given
       const id = '507f1f77bcf86cd799439011';
+
+      //when
       const result = await service.update(id, animalUpdateDto);
+
+      //then
       expect(result).toMatchSnapshot();
     });
 
     it('should throw error NotFoundException --> Not Found, when animal does not exist', async () => {
+      //when
       jest.spyOn(model, 'findByIdAndUpdate').mockImplementation(() => {
         throw new NotFoundException();
       });
@@ -185,6 +202,7 @@ describe('AnimalsService', () => {
     });
 
     it('should throw error InternalServerErrorException when mongodb fails', async () => {
+      //when
       jest.spyOn(model, 'findByIdAndUpdate').mockImplementation(() => {
         throw new Error('mongo fails');
       });
@@ -209,7 +227,7 @@ describe('AnimalsService', () => {
     });
 
     it('should throw error BadRequestException --> Animal already exist in database', async () => {
-      //given
+      //when
       jest.spyOn(model, 'findOne').mockResolvedValue({ _id: 'id' });
 
       //then
@@ -217,6 +235,7 @@ describe('AnimalsService', () => {
     });
 
     it('should throw error InternalServerErrorException when mongodb fails', async () => {
+      //when
       jest.spyOn(model, 'findOne').mockImplementation(() => {
         throw new Error('mongo fails');
       });
@@ -241,7 +260,7 @@ describe('AnimalsService', () => {
     });
 
     it('should throw error BadRequestException --> Animal from the list already exist in db', async () => {
-      //given
+      //when
       jest.spyOn(model, 'find').mockResolvedValue([
         {
           animalName: 'Elephant',
@@ -262,6 +281,7 @@ describe('AnimalsService', () => {
     });
 
     it('should throw error InternalServerErrorException when mongodb fails', async () => {
+      //when
       jest.spyOn(model, 'insertMany').mockImplementation(() => {
         throw new Error('mongo fails');
       });
@@ -290,6 +310,9 @@ describe('AnimalsService', () => {
 
     it('should throw error BadRequestException --> Animal from the list already exist in db', async () => {
       //given
+      const type: AnimalTypeParam = { type: AnimalType.MAMMALS };
+
+      //when
       jest.spyOn(model, 'find').mockResolvedValue([
         {
           animalName: 'Cat',
@@ -305,8 +328,6 @@ describe('AnimalsService', () => {
         },
       ]);
 
-      const type: AnimalTypeParam = { type: AnimalType.MAMMALS };
-
       //then
       await expect(
         service.addAnimalsWithOneType(animalsNamesList, type),
@@ -314,11 +335,13 @@ describe('AnimalsService', () => {
     });
 
     it('should throw error InternalServerErrorException when mongodb fails', async () => {
+      //given
+      const type: AnimalTypeParam = { type: AnimalType.MAMMALS };
+
+      //when
       jest.spyOn(model, 'insertMany').mockImplementation(() => {
         throw new Error('mongo fails');
       });
-
-      const type: AnimalTypeParam = { type: AnimalType.MAMMALS };
 
       //then
       await expect(
