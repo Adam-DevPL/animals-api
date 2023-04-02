@@ -19,10 +19,6 @@ exports[`AnimalsService addAnimals should return newly created animals 1`] = `
 ]
 `;
 
-exports[`AnimalsService addAnimals should throw error BadRequestException --> Animal from the list already exist in db 1`] = `[InternalServerErrorException: Internal Server Error]`;
-
-exports[`AnimalsService addAnimals should throw error InternalServerErrorException when mongodb fails 1`] = `[InternalServerErrorException: Internal Server Error]`;
-
 exports[`AnimalsService addAnimalsWithOneType should return newly created animals 1`] = `
 [
   {
@@ -42,10 +38,6 @@ exports[`AnimalsService addAnimalsWithOneType should return newly created animal
 ]
 `;
 
-exports[`AnimalsService addAnimalsWithOneType should throw error BadRequestException --> Animal from the list already exist in db 1`] = `[InternalServerErrorException: Internal Server Error]`;
-
-exports[`AnimalsService addAnimalsWithOneType should throw error InternalServerErrorException when mongodb fails 1`] = `[InternalServerErrorException: Internal Server Error]`;
-
 exports[`AnimalsService create should return newly created animal 1`] = `
 {
   "createdAt": 2022-02-02T00:00:00.000Z,
@@ -55,10 +47,6 @@ exports[`AnimalsService create should return newly created animal 1`] = `
   "type": "MAMMALS",
 }
 `;
-
-exports[`AnimalsService create should throw error BadRequestException --> Animal already exist in database 1`] = `[BadRequestException: Animal already exist in database]`;
-
-exports[`AnimalsService create should throw error InternalServerErrorException when mongodb fails 1`] = `[InternalServerErrorException: Internal Server Error]`;
 
 exports[`AnimalsService findAll should find all animals 1`] = `
 [
@@ -72,8 +60,6 @@ exports[`AnimalsService findAll should find all animals 1`] = `
 ]
 `;
 
-exports[`AnimalsService findAll should throw Internal Exception Error when something goes wrong with mongodb connection 1`] = `[InternalServerErrorException: Internal Server Error]`;
-
 exports[`AnimalsService findOne should return one animal 1`] = `
 AnimalDtoResponse {
   "createdAt": "Sun, 19 Mar 2023 18:27:12 GMT",
@@ -84,10 +70,6 @@ AnimalDtoResponse {
 }
 `;
 
-exports[`AnimalsService findOne should throw error InternalServerErrorException when mongodb fails 1`] = `[InternalServerErrorException: Internal Server Error]`;
-
-exports[`AnimalsService findOne should throw error NotFoundException --> Not Found, when animal does not exist 1`] = `[NotFoundException: Not Found]`;
-
 exports[`AnimalsService update should return updated animal 1`] = `
 AnimalDtoResponse {
   "createdAt": "Sun, 19 Mar 2023 18:27:12 GMT",
@@ -97,7 +79,3 @@ AnimalDtoResponse {
   "type": "BIRDS",
 }
 `;
-
-exports[`AnimalsService update should throw error InternalServerErrorException when mongodb fails 1`] = `[InternalServerErrorException: Internal Server Error]`;
-
-exports[`AnimalsService update should throw error NotFoundException --> Not Found, when animal does not exist 1`] = `[NotFoundException: Not Found]`;

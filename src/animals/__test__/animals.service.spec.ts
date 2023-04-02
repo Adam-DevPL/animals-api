@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   CACHE_MANAGER,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
@@ -136,7 +137,9 @@ describe('AnimalsService', () => {
       });
 
       //then
-      expect(service.findAll).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await service.findAll();
+      }).rejects.toThrowError(InternalServerErrorException);
     });
   });
 
@@ -159,9 +162,9 @@ describe('AnimalsService', () => {
       });
 
       //then
-      await expect(
-        service.findOne('507f1f77bcf86cd799439099'),
-      ).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await service.findOne('507f1f77bcf86cd799439099');
+      }).rejects.toThrowError(NotFoundException);
     });
 
     it('should throw error InternalServerErrorException when mongodb fails', async () => {
@@ -171,9 +174,9 @@ describe('AnimalsService', () => {
       });
 
       //then
-      await expect(
-        service.findOne('507f1f77bcf86cd799439099'),
-      ).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await service.findOne('507f1f77bcf86cd799439099');
+      }).rejects.toThrowError(InternalServerErrorException);
     });
   });
 
@@ -196,9 +199,9 @@ describe('AnimalsService', () => {
       });
 
       //then
-      await expect(
-        service.update('507f1f77bcf86cd799439099', animalUpdateDto),
-      ).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await service.update('507f1f77bcf86cd799439099', animalUpdateDto);
+      }).rejects.toThrowError(NotFoundException);
     });
 
     it('should throw error InternalServerErrorException when mongodb fails', async () => {
@@ -208,9 +211,9 @@ describe('AnimalsService', () => {
       });
 
       //then
-      await expect(
-        service.update('507f1f77bcf86cd799439099', animalUpdateDto),
-      ).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await service.update('507f1f77bcf86cd799439099', animalUpdateDto);
+      }).rejects.toThrowError(InternalServerErrorException);
     });
   });
 
@@ -231,7 +234,9 @@ describe('AnimalsService', () => {
       jest.spyOn(model, 'findOne').mockResolvedValue({ _id: 'id' });
 
       //then
-      await expect(service.create(animalDto)).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await service.create(animalDto);
+      }).rejects.toThrowError(BadRequestException);
     });
 
     it('should throw error InternalServerErrorException when mongodb fails', async () => {
@@ -241,7 +246,9 @@ describe('AnimalsService', () => {
       });
 
       //then
-      await expect(service.create(animalDto)).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await service.create(animalDto);
+      }).rejects.toThrowError(InternalServerErrorException);
     });
   });
 
@@ -261,23 +268,29 @@ describe('AnimalsService', () => {
 
     it('should throw error BadRequestException --> Animal from the list already exist in db', async () => {
       //when
-      jest.spyOn(model, 'find').mockResolvedValue([
-        {
-          animalName: 'Elephant',
-          type: AnimalType.MAMMALS,
-          createdAt: new Date('2023-03-19T18:27:12.933Z'),
-          description: 'test description',
-        },
-        {
-          animalName: 'Lion',
-          type: AnimalType.MAMMALS,
-          createdAt: new Date('2023-03-19T18:27:12.933Z'),
-          description: 'test description',
-        },
-      ]);
+      jest.spyOn(service, 'findAll').mockImplementation(() =>
+        Promise.resolve([
+          {
+            id: 'id1',
+            name: 'Elephant',
+            type: AnimalType.MAMMALS,
+            createdAt: '2023-03-19T18:27:12.933Z',
+            description: 'test description',
+          },
+          {
+            id: 'id2',
+            name: 'Lion',
+            type: AnimalType.MAMMALS,
+            createdAt: '2023-03-19T18:27:12.933Z',
+            description: 'test description',
+          },
+        ]),
+      );
 
       //then
-      await expect(service.addAnimals(animalsList)).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await service.addAnimals(animalsList);
+      }).rejects.toThrowError(BadRequestException);
     });
 
     it('should throw error InternalServerErrorException when mongodb fails', async () => {
@@ -287,7 +300,9 @@ describe('AnimalsService', () => {
       });
 
       //then
-      await expect(service.addAnimals(animalsList)).rejects.toMatchSnapshot();
+      expect(async () => {
+        await service.addAnimals(animalsList);
+      }).rejects.toThrowError(InternalServerErrorException);
     });
   });
 
@@ -313,25 +328,29 @@ describe('AnimalsService', () => {
       const type: AnimalTypeParam = { type: AnimalType.MAMMALS };
 
       //when
-      jest.spyOn(model, 'find').mockResolvedValue([
-        {
-          animalName: 'Cat',
-          type: AnimalType.MAMMALS,
-          createdAt: new Date('2023-03-19T18:27:12.933Z'),
-          description: 'test description',
-        },
-        {
-          animalName: 'Dog',
-          type: AnimalType.MAMMALS,
-          createdAt: new Date('2023-03-19T18:27:12.933Z'),
-          description: 'test description',
-        },
-      ]);
+      jest.spyOn(service, 'findAll').mockImplementation(() =>
+        Promise.resolve([
+          {
+            id: 'id1',
+            name: 'Cat',
+            type: AnimalType.MAMMALS,
+            createdAt: '2023-03-19T18:27:12.933Z',
+            description: 'test description',
+          },
+          {
+            id: 'id2',
+            name: 'Dog',
+            type: AnimalType.MAMMALS,
+            createdAt: '2023-03-19T18:27:12.933Z',
+            description: 'test description',
+          },
+        ]),
+      );
 
       //then
-      await expect(
-        service.addAnimalsWithOneType(animalsNamesList, type),
-      ).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await service.addAnimalsWithOneType(animalsNamesList, type);
+      }).rejects.toThrowError(BadRequestException);
     });
 
     it('should throw error InternalServerErrorException when mongodb fails', async () => {
@@ -344,9 +363,9 @@ describe('AnimalsService', () => {
       });
 
       //then
-      await expect(
-        service.addAnimalsWithOneType(animalsNamesList, type),
-      ).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await service.addAnimalsWithOneType(animalsNamesList, type);
+      }).rejects.toThrowError(InternalServerErrorException);
     });
   });
 });

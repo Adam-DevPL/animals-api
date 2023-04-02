@@ -113,12 +113,14 @@ export class AnimalsService {
   async addAnimals(animalsList: AnimalDto[]): Promise<AnimalDtoResponse[]> {
     try {
       const allAnimals: AnimalDtoResponse[] = await this.findAll();
+
       const alreadyExistAnimals: AnimalDto[] = animalsList.filter((animal) =>
         allAnimals.some(
           ({ name, type }) =>
             animal.animalName === name && animal.type === type,
         ),
       );
+
       if (alreadyExistAnimals.length !== 0) {
         throw new BadRequestException('Animals already exist in database');
       }
@@ -151,6 +153,7 @@ export class AnimalsService {
               animal.animalName === name && typeAnimal.type === type,
           ),
       );
+
       if (alreadyExistAnimals.length !== 0) {
         throw new BadRequestException('Animals already exist in database');
       }

@@ -4,6 +4,7 @@ import { Test } from '@nestjs/testing';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Types } from 'mongoose';
+import { NotFoundError } from 'rxjs';
 import { AnimalType } from 'src/types/animals.type';
 import { AnimalIdParam } from 'src/validations/id.validator';
 import { AnimalTypeParam } from 'src/validations/type.validator';
@@ -151,7 +152,9 @@ describe('AnimalsController', () => {
       });
 
       //then
-      expect(animalsController.getAllAnimals()).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await animalsController.getAllAnimals();
+      }).rejects.toThrowError(InternalServerErrorException);
     });
   });
 
@@ -174,11 +177,11 @@ describe('AnimalsController', () => {
       });
 
       //then
-      await expect(
-        animalsController.getAnimal({
+      await expect(async () => {
+        await animalsController.getAnimal({
           id: '507f1f77bcf86cd799439099',
-        }),
-      ).rejects.toMatchSnapshot();
+        });
+      }).rejects.toThrowError(NotFoundException);
     });
 
     it('should throw Internal Server Error Exception when mongodb fail', async () => {
@@ -188,11 +191,11 @@ describe('AnimalsController', () => {
       });
 
       //then
-      await expect(
-        animalsController.getAnimal({
+      await expect(async () => {
+        await animalsController.getAnimal({
           id: '507f1f77bcf86cd799439099',
-        }),
-      ).rejects.toMatchSnapshot();
+        });
+      }).rejects.toThrowError(InternalServerErrorException);
     });
 
     it('should throw error when id is not mongodb id', async () => {
@@ -231,14 +234,14 @@ describe('AnimalsController', () => {
       });
 
       //then
-      await expect(
-        animalsController.updateAnimal(
+      await expect(async () => {
+        await animalsController.updateAnimal(
           {
             id: '507f1f77bcf86cd799439099',
           },
           animalUpdate,
-        ),
-      ).rejects.toMatchSnapshot();
+        );
+      }).rejects.toThrowError(NotFoundException);
     });
 
     it('should throw error when id is not mongodb id - BadRequestException', async () => {
@@ -276,14 +279,14 @@ describe('AnimalsController', () => {
       });
 
       //then
-      expect(
-        animalsController.updateAnimal(
+      await expect(async () => {
+        await animalsController.updateAnimal(
           {
             id: '507f1f77bcf86cd799439099',
           },
           animalUpdate,
-        ),
-      ).rejects.toMatchSnapshot();
+        );
+      }).rejects.toThrowError(InternalServerErrorException);
     });
   });
 
@@ -306,9 +309,9 @@ describe('AnimalsController', () => {
       });
 
       //then
-      await expect(
-        animalsController.createAnimal(animalDto),
-      ).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await animalsController.createAnimal(animalDto);
+      }).rejects.toThrowError(BadRequestException);
     });
 
     it('should throw error when property type is not AnimalType - BadRequestException', async () => {
@@ -333,9 +336,9 @@ describe('AnimalsController', () => {
       });
 
       //then
-      expect(
-        animalsController.createAnimal(animalDto),
-      ).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await animalsController.createAnimal(animalDto);
+      }).rejects.toThrowError(InternalServerErrorException);
     });
   });
 
@@ -364,9 +367,9 @@ describe('AnimalsController', () => {
       });
 
       //then
-      await expect(
-        animalsController.addAnimalsList(animalDtoArray),
-      ).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await animalsController.addAnimalsList(animalDtoArray);
+      }).rejects.toThrowError(BadRequestException);
     });
 
     it('should throw error when no array as an entry DTO- BadRequestException', async () => {
@@ -394,9 +397,9 @@ describe('AnimalsController', () => {
       });
 
       //then
-      expect(
-        animalsController.addAnimalsList(animalDtoArray),
-      ).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await animalsController.addAnimalsList(animalDtoArray);
+      }).rejects.toThrowError(InternalServerErrorException);
     });
   });
 
@@ -433,9 +436,12 @@ describe('AnimalsController', () => {
         });
 
       //then
-      await expect(
-        animalsController.addAnimalsListWithType(animalNameArrayDto, type),
-      ).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await animalsController.addAnimalsListWithType(
+          animalNameArrayDto,
+          type,
+        );
+      }).rejects.toThrowError(BadRequestException);
     });
 
     it('should throw error when no array as an entry DTO - BadRequestException', async () => {
@@ -481,9 +487,12 @@ describe('AnimalsController', () => {
         });
 
       //then
-      expect(
-        animalsController.addAnimalsListWithType(animalNameArrayDto, type),
-      ).rejects.toMatchSnapshot();
+      await expect(async () => {
+        await animalsController.addAnimalsListWithType(
+          animalNameArrayDto,
+          type,
+        );
+      }).rejects.toThrowError(InternalServerErrorException);
     });
   });
 });
