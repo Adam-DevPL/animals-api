@@ -145,10 +145,12 @@ describe('AnimalsController', () => {
     });
 
     it('should throw an error when there is something wrong with mongodb connection', async () => {
+      //when
       jest.spyOn(animalsService, 'findAll').mockImplementation(() => {
         throw new InternalServerErrorException();
       });
 
+      //then
       expect(animalsController.getAllAnimals()).rejects.toMatchSnapshot();
     });
   });
@@ -166,7 +168,7 @@ describe('AnimalsController', () => {
     });
 
     it('should throw error when animal not found', async () => {
-      //given
+      //when
       jest.spyOn(animalsService, 'findOne').mockImplementation(() => {
         throw new NotFoundException();
       });
@@ -180,7 +182,7 @@ describe('AnimalsController', () => {
     });
 
     it('should throw Internal Server Error Exception when mongodb fail', async () => {
-      //given
+      //when
       jest.spyOn(animalsService, 'findOne').mockImplementation(() => {
         throw new InternalServerErrorException();
       });
@@ -214,7 +216,6 @@ describe('AnimalsController', () => {
 
       //when
       const result = await animalsController.updateAnimal(id, animalUpdate);
-      console.log(result);
 
       //then
       expect(result.name).toEqual(animalUpdate.animalName);
@@ -224,7 +225,7 @@ describe('AnimalsController', () => {
     });
 
     it('should throw error when animal not found', async () => {
-      //given
+      //when
       jest.spyOn(animalsService, 'update').mockImplementation(() => {
         throw new NotFoundException();
       });
@@ -269,7 +270,7 @@ describe('AnimalsController', () => {
     });
 
     it('should throw Interal Servel Error Exception when something goes worng with mongodb connection', async () => {
-      //given
+      //when
       jest.spyOn(animalsService, 'update').mockImplementation(() => {
         throw new InternalServerErrorException();
       });
@@ -299,7 +300,7 @@ describe('AnimalsController', () => {
     });
 
     it('should throw error - BadRequestException - when animal already exist', async () => {
-      //given
+      //when
       jest.spyOn(animalsService, 'create').mockImplementation(() => {
         throw new BadRequestException('Animal already exist in database');
       });
@@ -326,7 +327,7 @@ describe('AnimalsController', () => {
     });
 
     it('should throw Interal Servel Error Exception when something goes worng with mongodb connection', async () => {
-      //given
+      //when
       jest.spyOn(animalsService, 'create').mockImplementation(() => {
         throw new InternalServerErrorException();
       });
@@ -356,6 +357,8 @@ describe('AnimalsController', () => {
       const animalDtoArray = {
         animals: animalsList,
       };
+
+      //when
       jest.spyOn(animalsService, 'addAnimals').mockImplementation(() => {
         throw new BadRequestException('Animals already exist in database');
       });
@@ -384,6 +387,8 @@ describe('AnimalsController', () => {
       const animalDtoArray = {
         animals: animalsList,
       };
+
+      //when
       jest.spyOn(animalsService, 'addAnimals').mockImplementation(() => {
         throw new InternalServerErrorException();
       });
@@ -402,6 +407,7 @@ describe('AnimalsController', () => {
         animalsNames: animalsNamesList,
       };
       const type: AnimalTypeParam = { type: AnimalType.MAMMALS };
+
       //when
       const result = await animalsController.addAnimalsListWithType(
         animalNameArrayDto,
@@ -419,6 +425,7 @@ describe('AnimalsController', () => {
       };
       const type: AnimalTypeParam = { type: AnimalType.MAMMALS };
 
+      //when
       jest
         .spyOn(animalsService, 'addAnimalsWithOneType')
         .mockImplementation(() => {
@@ -465,6 +472,8 @@ describe('AnimalsController', () => {
         animalsNames: animalsNamesList,
       };
       const type: AnimalTypeParam = { type: AnimalType.MAMMALS };
+
+      //when
       jest
         .spyOn(animalsService, 'addAnimalsWithOneType')
         .mockImplementation(() => {
