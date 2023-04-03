@@ -28,7 +28,6 @@ export class AnimalsService {
       const animals: Animal[] = await this.animalModel.find();
       return AnimalDtoResponse.mapperArrayDto(animals);
     } catch (err) {
-      console.error(err);
       throw new InternalServerErrorException();
     }
   }
@@ -45,7 +44,6 @@ export class AnimalsService {
 
       return AnimalDtoResponse.mapperDto(animal);
     } catch (err) {
-      console.error(err);
       if (err instanceof NotFoundException) {
         throw new NotFoundException(err.message);
       }
@@ -70,11 +68,11 @@ export class AnimalsService {
         throw new NotFoundException('Animal with given id does not exist');
       }
 
-      await this.redisCacheManager.clearCache(animal._id.toString());
+      await this.redisCacheManager.clearAllCache();
+      await this.redisCacheManager.clearSingleCache(animal._id.toString());
 
       return AnimalDtoResponse.mapperDto(animal);
     } catch (err) {
-      console.error(err);
       if (err instanceof NotFoundException) {
         throw new NotFoundException(err.message);
       }
@@ -98,11 +96,10 @@ export class AnimalsService {
         ...animalData,
       });
 
-      await this.redisCacheManager.clearCache();
+      await this.redisCacheManager.clearAllCache();
 
       return AnimalDtoResponse.mapperDto(newAnimal);
     } catch (err) {
-      console.error(err);
       if (err instanceof BadRequestException) {
         throw new BadRequestException(err.message);
       }
@@ -125,7 +122,7 @@ export class AnimalsService {
         throw new BadRequestException('Animals already exist in database');
       }
 
-      await this.redisCacheManager.clearCache();
+      await this.redisCacheManager.clearAllCache();
 
       const animals: Animal[] = await this.animalModel.insertMany(
         animalsList.map((animal) => ({ createdAt: new Date(), ...animal })),
@@ -133,7 +130,6 @@ export class AnimalsService {
 
       return AnimalDtoResponse.mapperArrayDto(animals);
     } catch (err) {
-      console.error(err);
       if (err instanceof BadRequestException) {
         throw new BadRequestException(err.message);
       }
@@ -158,7 +154,7 @@ export class AnimalsService {
         throw new BadRequestException('Animals already exist in database');
       }
 
-      await this.redisCacheManager.clearCache();
+      await this.redisCacheManager.clearAllCache();
 
       const animals: Animal[] = await this.animalModel.insertMany(
         animalsNames.map((animal) => ({
@@ -170,7 +166,6 @@ export class AnimalsService {
 
       return AnimalDtoResponse.mapperArrayDto(animals);
     } catch (err) {
-      console.error(err);
       if (err instanceof BadRequestException) {
         throw new BadRequestException(err.message);
       }

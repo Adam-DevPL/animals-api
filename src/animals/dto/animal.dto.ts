@@ -99,7 +99,7 @@ export class AnimalDtoResponse {
   })
   description?: string;
 
-  constructor(
+  private constructor(
     id: Types.ObjectId,
     name: string,
     type: AnimalType,
