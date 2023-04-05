@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -24,152 +23,111 @@ export class AnimalsService {
   ) {}
 
   async findAll(): Promise<AnimalDtoResponse[]> {
-    try {
-      const animals: Animal[] = await this.animalModel.find();
-      return AnimalDtoResponse.mapperArrayDto(animals);
-    } catch (err) {
-      throw new InternalServerErrorException();
-    }
+    const animals: Animal[] = await this.animalModel.find();
+    return AnimalDtoResponse.mapperArrayDto(animals);
   }
 
   async findOne(id: string): Promise<AnimalDtoResponse> {
-    try {
-      const animal: AnimalDocument = await this.animalModel.findById({
-        _id: new Types.ObjectId(id),
-      });
+    const animal: AnimalDocument = await this.animalModel.findById({
+      _id: new Types.ObjectId(id),
+    });
 
-      if (!animal) {
-        throw new NotFoundException('Animal was not found in database');
-      }
-
-      return AnimalDtoResponse.mapperDto(animal);
-    } catch (err) {
-      if (err instanceof NotFoundException) {
-        throw new NotFoundException(err.message);
-      }
-      throw new InternalServerErrorException();
+    if (!animal) {
+      throw new NotFoundException('Animal was not found in database');
     }
+
+    return AnimalDtoResponse.mapperDto(animal);
   }
 
   async update(
     id: string,
     animalData: UpdateAnimalDto,
   ): Promise<AnimalDtoResponse> {
-    try {
-      const animal: AnimalDocument = await this.animalModel.findByIdAndUpdate(
-        { _id: new Types.ObjectId(id) },
-        animalData,
-        {
-          new: true,
-        },
-      );
+    const animal: AnimalDocument = await this.animalModel.findByIdAndUpdate(
+      { _id: new Types.ObjectId(id) },
+      animalData,
+      {
+        new: true,
+      },
+    );
 
-      if (!animal) {
-        throw new NotFoundException('Animal with given id does not exist');
-      }
-
-      await this.redisCacheManager.clearAllCache();
-      await this.redisCacheManager.clearSingleCache(animal._id.toString());
-
-      return AnimalDtoResponse.mapperDto(animal);
-    } catch (err) {
-      if (err instanceof NotFoundException) {
-        throw new NotFoundException(err.message);
-      }
-      throw new InternalServerErrorException();
+    if (!animal) {
+      throw new NotFoundException('Animal with given id does not exist');
     }
+
+    await this.redisCacheManager.clearAllCache();
+    await this.redisCacheManager.clearSingleCache(animal._id.toString());
+
+    return AnimalDtoResponse.mapperDto(animal);
   }
 
   async create(animalData: AnimalDto): Promise<AnimalDtoResponse> {
-    try {
-      const animal: AnimalDocument = await this.animalModel.findOne({
-        animalName: { $eq: animalData.animalName },
-        animalType: { $eq: animalData.type },
-      });
+    const animal: AnimalDocument = await this.animalModel.findOne({
+      animalName: { $eq: animalData.animalName },
+      animalType: { $eq: animalData.type },
+    });
 
-      if (animal) {
-        throw new BadRequestException('Animal already exist in database');
-      }
-
-      const newAnimal: AnimalDocument = await this.animalModel.create({
-        createdAt: new Date(),
-        ...animalData,
-      });
-
-      await this.redisCacheManager.clearAllCache();
-
-      return AnimalDtoResponse.mapperDto(newAnimal);
-    } catch (err) {
-      if (err instanceof BadRequestException) {
-        throw new BadRequestException(err.message);
-      }
-      throw new InternalServerErrorException();
+    if (animal) {
+      throw new BadRequestException('Animal already exist in database');
     }
+
+    const newAnimal: AnimalDocument = await this.animalModel.create({
+      createdAt: new Date(),
+      ...animalData,
+    });
+
+    await this.redisCacheManager.clearAllCache();
+
+    return AnimalDtoResponse.mapperDto(newAnimal);
   }
 
   async addAnimals(animalsList: AnimalDto[]): Promise<AnimalDtoResponse[]> {
-    try {
-      const allAnimals: AnimalDtoResponse[] = await this.findAll();
+    const allAnimals: AnimalDtoResponse[] = await this.findAll();
 
-      const alreadyExistAnimals: AnimalDto[] = animalsList.filter((animal) =>
-        allAnimals.some(
-          ({ name, type }) =>
-            animal.animalName === name && animal.type === type,
-        ),
-      );
+    const alreadyExistAnimals: AnimalDto[] = animalsList.filter((animal) =>
+      allAnimals.some(
+        ({ name, type }) => animal.animalName === name && animal.type === type,
+      ),
+    );
 
-      if (alreadyExistAnimals.length !== 0) {
-        throw new BadRequestException('Animals already exist in database');
-      }
-
-      await this.redisCacheManager.clearAllCache();
-
-      const animals: Animal[] = await this.animalModel.insertMany(
-        animalsList.map((animal) => ({ createdAt: new Date(), ...animal })),
-      );
-
-      return AnimalDtoResponse.mapperArrayDto(animals);
-    } catch (err) {
-      if (err instanceof BadRequestException) {
-        throw new BadRequestException(err.message);
-      }
-      throw new InternalServerErrorException();
+    if (alreadyExistAnimals.length !== 0) {
+      throw new BadRequestException('Animals already exist in database');
     }
+
+    await this.redisCacheManager.clearAllCache();
+
+    const animals: Animal[] = await this.animalModel.insertMany(
+      animalsList.map((animal) => ({ createdAt: new Date(), ...animal })),
+    );
+
+    return AnimalDtoResponse.mapperArrayDto(animals);
   }
   async addAnimalsWithOneType(
     animalsNames: AnimalNameDto[],
     typeAnimal: AnimalTypeParam,
   ): Promise<AnimalDtoResponse[]> {
-    try {
-      const allAnimals: AnimalDtoResponse[] = await this.findAll();
-      const alreadyExistAnimals: AnimalNameDto[] = animalsNames.filter(
-        (animal) =>
-          allAnimals.some(
-            ({ name, type }) =>
-              animal.animalName === name && typeAnimal.type === type,
-          ),
-      );
+    const allAnimals: AnimalDtoResponse[] = await this.findAll();
+    const alreadyExistAnimals: AnimalNameDto[] = animalsNames.filter((animal) =>
+      allAnimals.some(
+        ({ name, type }) =>
+          animal.animalName === name && typeAnimal.type === type,
+      ),
+    );
 
-      if (alreadyExistAnimals.length !== 0) {
-        throw new BadRequestException('Animals already exist in database');
-      }
-
-      await this.redisCacheManager.clearAllCache();
-
-      const animals: Animal[] = await this.animalModel.insertMany(
-        animalsNames.map((animal) => ({
-          createdAt: new Date(),
-          animalName: animal.animalName,
-          type: typeAnimal.type,
-        })),
-      );
-
-      return AnimalDtoResponse.mapperArrayDto(animals);
-    } catch (err) {
-      if (err instanceof BadRequestException) {
-        throw new BadRequestException(err.message);
-      }
-      throw new InternalServerErrorException();
+    if (alreadyExistAnimals.length !== 0) {
+      throw new BadRequestException('Animals already exist in database');
     }
+
+    await this.redisCacheManager.clearAllCache();
+
+    const animals: Animal[] = await this.animalModel.insertMany(
+      animalsNames.map((animal) => ({
+        createdAt: new Date(),
+        animalName: animal.animalName,
+        type: typeAnimal.type,
+      })),
+    );
+
+    return AnimalDtoResponse.mapperArrayDto(animals);
   }
 }

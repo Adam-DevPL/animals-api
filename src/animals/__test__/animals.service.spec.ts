@@ -1,12 +1,12 @@
 import {
   BadRequestException,
   CACHE_MANAGER,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Error, Model, Types } from 'mongoose';
+import { GlobalExceptionFilter } from 'src/filterts/globalexceptions.filter';
 import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
 import { AnimalType } from 'src/types/animals.type';
 import { AnimalTypeParam } from 'src/validations/type.validator';
@@ -54,14 +54,22 @@ const animalsNamesList: AnimalNameDto[] = [
   },
 ];
 
+const mockResponse = {
+  status: jest.fn().mockReturnThis(),
+  json: jest.fn(),
+};
+const mockRequest = {};
+
 describe('AnimalsService', () => {
   let service: AnimalsService;
   let model: Model<AnimalDocument>;
-  let redisCache: RedisCacheService;
+  let filter: GlobalExceptionFilter<any>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        GlobalExceptionFilter,
+
         RedisCacheService,
         AnimalsService,
         {
@@ -114,7 +122,7 @@ describe('AnimalsService', () => {
 
     service = module.get<AnimalsService>(AnimalsService);
     model = module.get<Model<AnimalDocument>>(getModelToken(Animal.name));
-    redisCache = module.get<RedisCacheService>(RedisCacheService);
+    filter = module.get<GlobalExceptionFilter<any>>(GlobalExceptionFilter);
     jest.clearAllMocks();
   });
 
@@ -137,9 +145,22 @@ describe('AnimalsService', () => {
       });
 
       //then
-      await expect(async () => {
+      try {
         await service.findAll();
-      }).rejects.toThrowError(InternalServerErrorException);
+      } catch (err) {
+        filter.catch(err, {
+          switchToHttp: () => ({
+            getRequest: () => mockRequest,
+            getResponse: () => mockResponse,
+          }),
+        } as any);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+          message: 'Unexpected error. Sorry for a trouble',
+          status: 500,
+        });
+      }
     });
   });
 
@@ -174,9 +195,22 @@ describe('AnimalsService', () => {
       });
 
       //then
-      await expect(async () => {
+      try {
         await service.findOne('507f1f77bcf86cd799439099');
-      }).rejects.toThrowError(InternalServerErrorException);
+      } catch (err) {
+        filter.catch(err, {
+          switchToHttp: () => ({
+            getRequest: () => mockRequest,
+            getResponse: () => mockResponse,
+          }),
+        } as any);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+          message: 'Unexpected error. Sorry for a trouble',
+          status: 500,
+        });
+      }
     });
   });
 
@@ -211,9 +245,22 @@ describe('AnimalsService', () => {
       });
 
       //then
-      await expect(async () => {
+      try {
         await service.update('507f1f77bcf86cd799439099', animalUpdateDto);
-      }).rejects.toThrowError(InternalServerErrorException);
+      } catch (err) {
+        filter.catch(err, {
+          switchToHttp: () => ({
+            getRequest: () => mockRequest,
+            getResponse: () => mockResponse,
+          }),
+        } as any);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+          message: 'Unexpected error. Sorry for a trouble',
+          status: 500,
+        });
+      }
     });
   });
 
@@ -246,9 +293,22 @@ describe('AnimalsService', () => {
       });
 
       //then
-      await expect(async () => {
+      try {
         await service.create(animalDto);
-      }).rejects.toThrowError(InternalServerErrorException);
+      } catch (err) {
+        filter.catch(err, {
+          switchToHttp: () => ({
+            getRequest: () => mockRequest,
+            getResponse: () => mockResponse,
+          }),
+        } as any);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+          message: 'Unexpected error. Sorry for a trouble',
+          status: 500,
+        });
+      }
     });
   });
 
@@ -300,9 +360,22 @@ describe('AnimalsService', () => {
       });
 
       //then
-      expect(async () => {
+      try {
         await service.addAnimals(animalsList);
-      }).rejects.toThrowError(InternalServerErrorException);
+      } catch (err) {
+        filter.catch(err, {
+          switchToHttp: () => ({
+            getRequest: () => mockRequest,
+            getResponse: () => mockResponse,
+          }),
+        } as any);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+          message: 'Unexpected error. Sorry for a trouble',
+          status: 500,
+        });
+      }
     });
   });
 
@@ -363,9 +436,22 @@ describe('AnimalsService', () => {
       });
 
       //then
-      await expect(async () => {
+      try {
         await service.addAnimalsWithOneType(animalsNamesList, type);
-      }).rejects.toThrowError(InternalServerErrorException);
+      } catch (err) {
+        filter.catch(err, {
+          switchToHttp: () => ({
+            getRequest: () => mockRequest,
+            getResponse: () => mockResponse,
+          }),
+        } as any);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+          message: 'Unexpected error. Sorry for a trouble',
+          status: 500,
+        });
+      }
     });
   });
 });
