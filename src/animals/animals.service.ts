@@ -45,7 +45,7 @@ export class AnimalsService {
   ): Promise<AnimalDtoResponse> {
     const animal: AnimalDocument = await this.animalModel.findByIdAndUpdate(
       { _id: { $eq: new Types.ObjectId(id) } },
-      { $eq: animalData },
+      animalData,
       {
         new: true,
       },
