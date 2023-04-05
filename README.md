@@ -1,4 +1,3 @@
-
 # Animals API
 
 Simple backend application with basic operation to add, find all or single animals to the database.
@@ -158,4 +157,3 @@ To run tests, run the following command
 ## Deployment
 
 To deploy this project I used AWS with Github Actions. Configuration Github Actions and AWS not included.
-

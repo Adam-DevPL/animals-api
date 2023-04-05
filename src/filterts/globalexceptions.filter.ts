@@ -7,7 +7,6 @@ export class GlobalExceptionFilter<T> implements ExceptionFilter {
   catch(exception: T, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-
     const { status, message } = getStatusAndErrorMsg(exception);
 
     response.status(status).json({

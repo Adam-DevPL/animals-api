@@ -5,17 +5,25 @@ import { RedisCacheService } from './redis-cache.service';
 
 @Module({
   imports: [
-    CacheModule.register({
+    CacheModule.registerAsync<any>({
       isGlobal: true,
       imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const store = await redisStore({
+          socket: {
+            host: configService.get<string>('REDIS_HOST'),
+            port: parseInt(configService.get<string>('REDIS_PORT')),
+          },
+        });
+
+        return {
+          store: () => store,
+        };
+      },
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        store: redisStore,
-        host: configService.get('REDIS_HOST'),
-        port: configService.get('REDIS_PORT'),
-      }),
     }),
   ],
   providers: [RedisCacheService],
+  exports: [RedisCacheService],
 })
 export class RedisCacheModule {}

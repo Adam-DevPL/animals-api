@@ -1,12 +1,79 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AnimalsController addAnimalsListWithType should add list of animals with one type 1`] = `
+[
+  {
+    "_id": "id1",
+    "animalName": "Cat",
+    "createdAt": "2022-02-02",
+    "type": "MAMMALS",
+  },
+  {
+    "_id": "id2",
+    "animalName": "Dog",
+    "createdAt": "2022-02-02",
+    "type": "MAMMALS",
+  },
+]
+`;
+
+exports[`AnimalsController addAnimalsLsit should add list of animals 1`] = `
+[
+  {
+    "_id": "id1",
+    "animalName": "Elephant",
+    "createdAt": "2022-02-02",
+    "type": "MAMMALS",
+  },
+  {
+    "_id": "id2",
+    "animalName": "Lion",
+    "createdAt": "2022-02-02",
+    "type": "MAMMALS",
+  },
+]
+`;
+
+exports[`AnimalsController createAnimal should create an animal 1`] = `
+{
+  "_id": "507f1f77bcf86cd799439011",
+  "animalName": "Dog",
+  "createdAt": "2023-03-19",
+  "description": "new dog created",
+  "name": "Dog",
+  "type": "MAMMALS",
+}
+`;
+
 exports[`AnimalsController getAllAnimals should return an array of animals 1`] = `
 [
   {
+    "_id": "507f1f77bcf86cd799439011",
     "animalName": "Human",
     "createdAt": 2023-03-19T18:27:12.933Z,
     "description": "test description",
     "type": "MAMMALS",
   },
 ]
+`;
+
+exports[`AnimalsController getAnimal should return an animal 1`] = `
+{
+  "_id": "507f1f77bcf86cd799439011",
+  "animalName": "Human",
+  "createdAt": 2023-03-19T18:27:12.933Z,
+  "description": "test description",
+  "type": "MAMMALS",
+}
+`;
+
+exports[`AnimalsController updateAnimal should update an animal 1`] = `
+{
+  "animalName": "Cat",
+  "createdAt": "2023-03-19",
+  "description": "description after update",
+  "id": "507f1f77bcf86cd799439011",
+  "name": "Cat",
+  "type": "BIRDS",
+}
 `;

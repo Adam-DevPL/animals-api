@@ -1,6 +1,7 @@
-import { IsMongoId } from 'class-validator';
+import { IsMongoId, IsNotEmpty } from 'class-validator';
 
-export class ParamsWithId {
+export class AnimalIdParam {
+  @IsNotEmpty()
   @IsMongoId()
   id: string;
 }

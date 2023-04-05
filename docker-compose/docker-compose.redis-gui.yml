@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    networks:
+      - animals-api-network
+    environment:
+      - REDIS_HOSTS=local:redis-cache:6379
+    ports:
+      - '8085:8081'
+
+networks:
+  animals-api-network:
+    driver: bridge
